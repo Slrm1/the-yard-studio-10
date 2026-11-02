@@ -10,33 +10,180 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as EditorRouteImport } from './routes/editor'
+import { Route as EmergencyRouteImport } from './routes/emergency'
+import { Route as LibraryRouteImport } from './routes/library'
+import { Route as LoungeRouteImport } from './routes/lounge'
+import { Route as MapRouteImport } from './routes/map'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as ReviewsRouteImport } from './routes/reviews'
+import { Route as RobotsRouteImport } from './routes/robots'
+import { Route as SeasonalRouteImport } from './routes/seasonal'
+import { Route as StudiosRouteImport } from './routes/studios'
+import { Route as UsabilityRouteImport } from './routes/usability'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EditorRoute = EditorRouteImport.update({
+  id: '/editor',
+  path: '/editor',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmergencyRoute = EmergencyRouteImport.update({
+  id: '/emergency',
+  path: '/emergency',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LibraryRoute = LibraryRouteImport.update({
+  id: '/library',
+  path: '/library',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoungeRoute = LoungeRouteImport.update({
+  id: '/lounge',
+  path: '/lounge',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MapRoute = MapRouteImport.update({
+  id: '/map',
+  path: '/map',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReviewsRoute = ReviewsRouteImport.update({
+  id: '/reviews',
+  path: '/reviews',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsRoute = RobotsRouteImport.update({
+  id: '/robots',
+  path: '/robots',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SeasonalRoute = SeasonalRouteImport.update({
+  id: '/seasonal',
+  path: '/seasonal',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StudiosRoute = StudiosRouteImport.update({
+  id: '/studios',
+  path: '/studios',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UsabilityRoute = UsabilityRouteImport.update({
+  id: '/usability',
+  path: '/usability',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/editor': typeof EditorRoute
+  '/emergency': typeof EmergencyRoute
+  '/library': typeof LibraryRoute
+  '/lounge': typeof LoungeRoute
+  '/map': typeof MapRoute
+  '/profile': typeof ProfileRoute
+  '/reviews': typeof ReviewsRoute
+  '/robots': typeof RobotsRoute
+  '/seasonal': typeof SeasonalRoute
+  '/studios': typeof StudiosRoute
+  '/usability': typeof UsabilityRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/editor': typeof EditorRoute
+  '/emergency': typeof EmergencyRoute
+  '/library': typeof LibraryRoute
+  '/lounge': typeof LoungeRoute
+  '/map': typeof MapRoute
+  '/profile': typeof ProfileRoute
+  '/reviews': typeof ReviewsRoute
+  '/robots': typeof RobotsRoute
+  '/seasonal': typeof SeasonalRoute
+  '/studios': typeof StudiosRoute
+  '/usability': typeof UsabilityRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/editor': typeof EditorRoute
+  '/emergency': typeof EmergencyRoute
+  '/library': typeof LibraryRoute
+  '/lounge': typeof LoungeRoute
+  '/map': typeof MapRoute
+  '/profile': typeof ProfileRoute
+  '/reviews': typeof ReviewsRoute
+  '/robots': typeof RobotsRoute
+  '/seasonal': typeof SeasonalRoute
+  '/studios': typeof StudiosRoute
+  '/usability': typeof UsabilityRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/editor'
+    | '/emergency'
+    | '/library'
+    | '/lounge'
+    | '/map'
+    | '/profile'
+    | '/reviews'
+    | '/robots'
+    | '/seasonal'
+    | '/studios'
+    | '/usability'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/editor'
+    | '/emergency'
+    | '/library'
+    | '/lounge'
+    | '/map'
+    | '/profile'
+    | '/reviews'
+    | '/robots'
+    | '/seasonal'
+    | '/studios'
+    | '/usability'
+  id:
+    | '__root__'
+    | '/'
+    | '/editor'
+    | '/emergency'
+    | '/library'
+    | '/lounge'
+    | '/map'
+    | '/profile'
+    | '/reviews'
+    | '/robots'
+    | '/seasonal'
+    | '/studios'
+    | '/usability'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EditorRoute: typeof EditorRoute
+  EmergencyRoute: typeof EmergencyRoute
+  LibraryRoute: typeof LibraryRoute
+  LoungeRoute: typeof LoungeRoute
+  MapRoute: typeof MapRoute
+  ProfileRoute: typeof ProfileRoute
+  ReviewsRoute: typeof ReviewsRoute
+  RobotsRoute: typeof RobotsRoute
+  SeasonalRoute: typeof SeasonalRoute
+  StudiosRoute: typeof StudiosRoute
+  UsabilityRoute: typeof UsabilityRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +195,99 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/editor': {
+      id: '/editor'
+      path: '/editor'
+      fullPath: '/editor'
+      preLoaderRoute: typeof EditorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/emergency': {
+      id: '/emergency'
+      path: '/emergency'
+      fullPath: '/emergency'
+      preLoaderRoute: typeof EmergencyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/library': {
+      id: '/library'
+      path: '/library'
+      fullPath: '/library'
+      preLoaderRoute: typeof LibraryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lounge': {
+      id: '/lounge'
+      path: '/lounge'
+      fullPath: '/lounge'
+      preLoaderRoute: typeof LoungeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/map': {
+      id: '/map'
+      path: '/map'
+      fullPath: '/map'
+      preLoaderRoute: typeof MapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reviews': {
+      id: '/reviews'
+      path: '/reviews'
+      fullPath: '/reviews'
+      preLoaderRoute: typeof ReviewsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots': {
+      id: '/robots'
+      path: '/robots'
+      fullPath: '/robots'
+      preLoaderRoute: typeof RobotsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/seasonal': {
+      id: '/seasonal'
+      path: '/seasonal'
+      fullPath: '/seasonal'
+      preLoaderRoute: typeof SeasonalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/studios': {
+      id: '/studios'
+      path: '/studios'
+      fullPath: '/studios'
+      preLoaderRoute: typeof StudiosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/usability': {
+      id: '/usability'
+      path: '/usability'
+      fullPath: '/usability'
+      preLoaderRoute: typeof UsabilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EditorRoute: EditorRoute,
+  EmergencyRoute: EmergencyRoute,
+  LibraryRoute: LibraryRoute,
+  LoungeRoute: LoungeRoute,
+  MapRoute: MapRoute,
+  ProfileRoute: ProfileRoute,
+  ReviewsRoute: ReviewsRoute,
+  RobotsRoute: RobotsRoute,
+  SeasonalRoute: SeasonalRoute,
+  StudiosRoute: StudiosRoute,
+  UsabilityRoute: UsabilityRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
