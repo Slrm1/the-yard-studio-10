@@ -15,8 +15,8 @@ export function SimulationBanner() {
     <div role="note" aria-label="Simulation disclaimer" className="sticky top-14 z-30 mb-6 rounded-md border-2 border-alert-ink bg-alert p-3 text-alert-ink lg:top-0">
       <p className="font-display text-xl leading-tight break-words sm:text-2xl">{SIM_TEXT}</p>
       <p className="mt-1 flex flex-wrap items-center gap-x-2 text-sm font-semibold">
-        <Phone className="h-4 w-4 shrink-0" aria-hidden /> Real emergency? Call <a className="underline" href="tel:911">911</a> or Howard University Department of Public Safety
-        (<a className="underline" href="tel:+12028061100">202-806-1100</a>). Follow official university alerts.
+        <Phone className="h-4 w-4 shrink-0" aria-hidden /> Real emergency? Call <a className="underline" href="tel:911">911</a> or the Howard University Department of Public Safety emergency line
+        (<a className="underline" href="tel:+12028067777">202-806-7777</a>). Follow official university alerts.
       </p>
     </div>
   );
