@@ -28,7 +28,13 @@ function load(): AppState {
     if (raw) {
       const parsed = JSON.parse(raw) as AppState;
       if (parsed && parsed.version === 1 && Array.isArray(parsed.projects)) {
-        state = { ...seed(), ...parsed };
+        // Keep existing browser data when new demo collections are introduced.
+        state = {
+          ...seed(),
+          ...parsed,
+          chats: Array.isArray(parsed.chats) ? parsed.chats : seed().chats,
+          savedEventIds: Array.isArray(parsed.savedEventIds) ? parsed.savedEventIds : [],
+        };
         return state;
       }
     }
@@ -245,6 +251,24 @@ export const actions = {
     set((s) => ({
       ...s,
       threads: s.threads.map((t) => (t.id === threadId ? { ...t, comments: [...t.comments, { id: uid("c"), author: "You", role: s.role, body: body.trim(), at: now() }] } : t)),
+    }));
+  },
+  postChat(roomId: string, body: string) {
+    const cleaned = body.trim();
+    if (!cleaned) return;
+    set((s) => ({
+      ...s,
+      chats: s.chats.map((room) => room.id === roomId
+        ? { ...room, messages: [...room.messages, { id: uid("m"), author: "You", body: cleaned, at: now() }].slice(-50) }
+        : room),
+    }));
+  },
+  toggleEventInterest(eventId: string) {
+    set((s) => ({
+      ...s,
+      savedEventIds: s.savedEventIds.includes(eventId)
+        ? s.savedEventIds.filter((id) => id !== eventId)
+        : [...s.savedEventIds, eventId],
     }));
   },
   setSafety(status: "safe" | "assist" | null) {
