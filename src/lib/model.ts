@@ -62,6 +62,8 @@ export type Thread = {
   comments: Comment[];
 };
 export type Activity = { id: string; at: number; text: string };
+export type ChatMessage = { id: string; author: string; body: string; at: number; sample?: boolean };
+export type ChatRoom = { id: string; name: string; topic: string; messages: ChatMessage[] };
 
 export type TaskFlags = {
   springfestCreated: boolean;
@@ -77,6 +79,8 @@ export type AppState = {
   reviews: Review[];
   orgs: Org[];
   threads: Thread[];
+  chats: ChatRoom[];
+  savedEventIds: string[];
   activity: Activity[];
   tasks: TaskFlags;
   selectedProjectId: string | null;
