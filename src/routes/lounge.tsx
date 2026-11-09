@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { actions, useAppState } from "@/lib/store";
 import { formatTime } from "@/lib/model";
+import { ShowcaseChat } from "@/components/showcase-chat";
 
 export const Route = createFileRoute("/lounge")({
   head: () => ({ meta: [
@@ -60,6 +61,7 @@ function Lounge() {
       }>
         Exchange design ideas, give feedback, and explore conversations. These are local demo threads, not messages sent to other students.
       </PageHeader>
+      <ShowcaseChat />
       {newOpen && (
         <section className="mb-7 rounded-md border-2 border-ink bg-cream p-5" aria-labelledby="start-thread">
           <h2 id="start-thread" className="font-display text-3xl text-navy">Start a conversation</h2>
