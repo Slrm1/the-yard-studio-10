@@ -1,9 +1,6 @@
 name: Yard Studio verification
+# Manual-only until GitHub Actions billing/spending limits are resolved.
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
 jobs:
   verify:
