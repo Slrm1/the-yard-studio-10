@@ -133,7 +133,7 @@ export function DesignCanvas({ props, blocks, mobile, onRemoveBlock }: { props: 
           <Btn p={props}>{props.cta || "Call to action"}</Btn>
         </div>
       </div>
-      {props.schedule.length > 0 && BLOCKS[1].render(props, mobile)}
+      {props.schedule.length > 0 && BLOCKS.find((block) => block.id === "schedule-list")?.render(props, mobile)}
       {blocks.map((id, i) => {
         const b = blockById(id);
         if (!b) return null;
