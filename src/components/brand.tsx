@@ -28,13 +28,13 @@ export function DemoBadge({ children = "Demo / concept", className }: { children
 
 export function PageHeader({ eyebrow, title, children, actions }: { eyebrow: string; title: ReactNode; children?: ReactNode; actions?: ReactNode }) {
   return (
-    <header className="mb-8 flex flex-col gap-4 border-b-2 border-ink pb-6 md:flex-row md:items-end md:justify-between">
-      <div className="max-w-3xl">
+    <header className="mb-8 flex min-w-0 flex-col gap-4 border-b-2 border-ink pb-6 md:flex-row md:items-end md:justify-between">
+      <div className="min-w-0 max-w-3xl">
         <p className="eyebrow text-cardinal">{eyebrow}</p>
-        <h1 className="font-display mt-2 text-5xl text-navy md:text-7xl">{title}</h1>
-        {children && <div className="mt-3 text-base text-muted-foreground">{children}</div>}
+        <h1 className="font-display mt-2 break-words text-[clamp(2.5rem,6.6vw,4.75rem)] leading-[1.02] text-navy">{title}</h1>
+        {children && <div className="mt-3 break-words text-base leading-relaxed text-muted-foreground">{children}</div>}
       </div>
-      {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
+      {actions && <div className="flex min-w-0 flex-wrap gap-2">{actions}</div>}
     </header>
   );
 }
@@ -42,7 +42,7 @@ export function PageHeader({ eyebrow, title, children, actions }: { eyebrow: str
 export function EmptyState({ title, children }: { title: string; children?: ReactNode }) {
   return (
     <div className="rounded-md border-2 border-dashed border-border bg-card p-8 text-center">
-      <p className="font-display text-2xl text-navy">{title}</p>
+      <p className="font-display break-words text-2xl text-navy">{title}</p>
       {children && <div className="mt-2 text-sm text-muted-foreground">{children}</div>}
     </div>
   );
