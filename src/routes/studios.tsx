@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { NewProjectDialog } from "@/components/new-project-dialog";
 import { actions, useAppState } from "@/lib/store";
 import { validateEmail } from "@/lib/model";
+import { SAMPLE_PEOPLE } from "@/lib/showcase";
 
 export const Route = createFileRoute("/studios")({
   head: () => ({ meta: [
@@ -68,6 +69,37 @@ function Studios() {
         <div className="rounded-md border-2 border-ink bg-cream p-5"><Users aria-hidden /><p className="font-display mt-2 text-4xl">{orgs.reduce((n, o) => n + o.members.length, 0)}</p><p className="text-sm">Listed sample and demo members</p></div>
         <div className="rounded-md border-2 border-ink bg-cardinal p-5 text-paper"><Plus aria-hidden /><p className="font-display mt-2 text-4xl">{projects.length}</p><p className="text-sm">Concept projects</p></div>
       </div>
+      <section className="mb-10" aria-labelledby="people-heading">
+        <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="eyebrow text-cardinal">A sample of the community</p>
+            <h2 id="people-heading" className="font-display mt-2 break-words text-3xl text-navy sm:text-4xl">Meet the Bison builders</h2>
+          </div>
+          <DemoBadge>Fictional profiles · demonstration only</DemoBadge>
+        </div>
+        <p className="mb-5 max-w-3xl text-sm text-muted-foreground">
+          These fictional people and profiles show how the community directory could look. They are not verified Howard students or real accounts.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {SAMPLE_PEOPLE.map((person, i) => (
+            <article key={person.id} className="min-w-0 rounded-md border bg-card p-4">
+              <div className="flex min-w-0 items-center gap-3">
+                <div aria-hidden className={"grid h-12 w-12 shrink-0 place-items-center rounded-full border-2 border-ink font-display text-xl " + (i % 3 === 0 ? "bg-cardinal text-paper" : i % 3 === 1 ? "bg-navy text-paper" : "bg-gold text-ink")}>{person.initials}</div>
+                <div className="min-w-0">
+                  <h3 className="break-words font-semibold text-navy">{person.name}</h3>
+                  <p className="break-words text-xs text-muted-foreground">{person.role}</p>
+                </div>
+              </div>
+              <p className="eyebrow mt-4 text-cardinal">{person.focus}</p>
+              <p className="mt-2 min-h-14 break-words text-sm leading-relaxed">{person.blurb}</p>
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {person.skills.map((skill) => <span key={skill} className="rounded-full border bg-cream px-2 py-1 text-xs">{skill}</span>)}
+              </div>
+              <a className="mt-4 inline-block text-sm font-semibold text-cardinal underline underline-offset-2" href={"#studio-" + person.orgId}>View their sample studio</a>
+            </article>
+          ))}
+        </div>
+      </section>
       <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         <section aria-labelledby="studios-list" className="min-w-0">
           <h2 id="studios-list" className="font-display mb-4 text-3xl text-navy">Explore the studios</h2>
@@ -75,7 +107,7 @@ function Studios() {
             {orgs.map((org) => {
               const ownProjects = projects.filter((p) => p.orgId === org.id);
               return (
-                <article key={org.id} className="min-w-0 rounded-md border-2 border-ink bg-card p-5 shadow-block">
+                <article key={org.id} id={"studio-" + org.id} className="min-w-0 scroll-mt-6 rounded-md border-2 border-ink bg-card p-5 shadow-block">
                   <div className="flex flex-wrap items-start justify-between gap-2"><DemoBadge>Concept studio</DemoBadge><span className="eyebrow text-muted-foreground">{ownProjects.length} projects</span></div>
                   <h3 className="font-display mt-4 break-words text-3xl leading-tight text-navy">{org.name}</h3>
                   <p className="mt-2 break-words text-sm text-muted-foreground">{org.tagline}</p>
