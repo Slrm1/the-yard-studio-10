@@ -52,7 +52,7 @@ function Seasonal() {
                 <NewProjectDialog
                   defaultSeason={room.id}
                   defaultName={room.prompt}
-                  defaultOrg={orgs[0]?.id}
+                  defaultOrg={orgs[0]?.id ?? ""}
                   trigger={<Button variant="cardinal"><CalendarDays aria-hidden /> Start a {room.name} page</Button>}
                 />
               </div>
