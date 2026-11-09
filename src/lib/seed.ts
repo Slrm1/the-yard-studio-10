@@ -184,6 +184,46 @@ export function makeSeed(): AppState {
         comments: [],
       },
     ],
+    savedEventIds: [],
+    chats: [
+      {
+        id: "general", name: "The Yard · general", topic: "Share what you're building",
+        messages: [
+          { id: "g1", author: "Amara O.", body: "Welcome to the showcase chat! What is everybody building this week?", at: h(26), sample: true },
+          { id: "g2", author: "Malik R.", body: "Working on a bold Homecoming visual kit. I want it to feel like the Yard, not a generic festival site.", at: h(27), sample: true },
+          { id: "g3", author: "Nia W.", body: "Love that. Can we make sure the type is still readable on phones?", at: h(28), sample: true },
+          { id: "g4", author: "Kofi B.", body: "Absolutely. I have a mobile-first prototype ready for feedback.", at: h(29), sample: true },
+          { id: "g5", author: "Amara O.", body: "Drop it into the review queue so we can compare ideas!", at: h(30), sample: true },
+        ],
+      },
+      {
+        id: "homecoming-chat", name: "Homecoming concepts", topic: "Visuals, event pages, and campus culture",
+        messages: [
+          { id: "hc1", author: "Malik R.", body: "Poster concept A has a cardinal-red background. Concept B is navy with a huge headline.", at: h(22), sample: true },
+          { id: "hc2", author: "Avery S.", body: "B is easier to scan. A could be our social thumbnail.", at: h(23), sample: true },
+          { id: "hc3", author: "Nia W.", body: "I added a compact schedule card so nobody has to scroll through a giant flyer.", at: h(25), sample: true },
+          { id: "hc4", author: "Amara O.", body: "Let's bring the options to the fictional Homecoming Creative Kickoff.", at: h(27), sample: true },
+        ],
+      },
+      {
+        id: "ux-chat", name: "Accessibility lab", topic: "Readable, inclusive, keyboard-friendly UI",
+        messages: [
+          { id: "ux1", author: "Jordan T.", body: "Quick check: can everyone reach the primary action using only a keyboard?", at: h(20), sample: true },
+          { id: "ux2", author: "Imani D.", body: "Also check 200% text zoom and whether instructions wrap.", at: h(22), sample: true },
+          { id: "ux3", author: "Kofi B.", body: "I fixed the small-screen button label. Would someone review the contrast?", at: h(24), sample: true },
+          { id: "ux4", author: "Jordan T.", body: "Yes. Send it to the review queue and I'll leave specific notes.", at: h(25), sample: true },
+        ],
+      },
+      {
+        id: "build-chat", name: "Build help", topic: "Front-end questions and design feedback",
+        messages: [
+          { id: "b1", author: "Zuri M.", body: "How should the robot practice screen communicate that the alert is simulated?", at: h(21), sample: true },
+          { id: "b2", author: "Imani D.", body: "Keep a visible 'Simulation only' banner on every screen, including mobile.", at: h(23), sample: true },
+          { id: "b3", author: "Avery S.", body: "Motion should also respect reduced-motion settings.", at: h(24), sample: true },
+          { id: "b4", author: "Zuri M.", body: "Good call. I'll add a test case for that.", at: h(26), sample: true },
+        ],
+      },
+    ],
     activity: [
       { id: "a1", at: h(31), text: "Sample: Jordan T. commented on the HUSA mobile header" },
       { id: "a2", at: h(26), text: "Sample: Homecoming Event Site moved into the Homecoming room" },
