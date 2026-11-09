@@ -9,6 +9,7 @@ import { ProjectTile } from "@/components/project-art";
 import { NewProjectDialog } from "@/components/new-project-dialog";
 import { EmptyState, YMark } from "@/components/brand";
 import { formatTime } from "@/lib/model";
+import { SAMPLE_EVENTS, SAMPLE_PEOPLE } from "@/lib/showcase";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -23,7 +24,7 @@ export const Route = createFileRoute("/")({
 });
 
 function TheYard() {
-  const { projects, activity, orgs } = useAppState();
+  const { projects, activity, orgs, chats } = useAppState();
   const [q, setQ] = useState("");
   const filtered = useMemo(() => {
     const t = q.trim().toLowerCase();
@@ -68,6 +69,40 @@ function TheYard() {
         <EmptyState title="No projects match">Try another search, or create a new project.</EmptyState>
       )}
 
+      <section className="mt-14" aria-labelledby="around-yard">
+        <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+          <div><p className="eyebrow text-cardinal">Fictional preview content</p>
+            <h2 id="around-yard" className="font-display mt-2 break-words text-3xl text-navy sm:text-4xl">Around the Yard</h2>
+          </div>
+          <p className="max-w-md text-xs leading-relaxed text-muted-foreground">These people, events and messages are fictional examples to demonstrate what a lively student creative community could look like.</p>
+        </div>
+        <div className="grid gap-4 lg:grid-cols-3">
+          <article className="min-w-0 rounded-md border-2 border-ink bg-cream p-5">
+            <p className="eyebrow text-cardinal">Event concepts · sample only</p>
+            <h3 className="font-display mt-3 break-words text-2xl text-navy">{SAMPLE_EVENTS[3]?.title}</h3>
+            <p className="mt-2 text-sm leading-relaxed">{SAMPLE_EVENTS[3]?.summary}</p>
+            <p className="mt-2 text-xs text-muted-foreground">No actual event is scheduled.</p>
+            <Link to="/seasonal" className="mt-5 inline-block text-sm font-semibold text-cardinal underline underline-offset-2">Explore event concepts →</Link>
+          </article>
+          <article className="min-w-0 rounded-md border-2 border-ink bg-navy p-5 text-paper">
+            <p className="eyebrow text-paper/70">Sample group chat</p>
+            <h3 className="font-display mt-3 break-words text-2xl">{chats[0]?.name ?? "The Yard · general"}</h3>
+            <p className="mt-3 break-words rounded-md bg-paper/10 p-3 text-sm italic">“{chats[0]?.messages[0]?.body ?? "What are you building this week?"}”</p>
+            <p className="mt-2 text-xs text-paper/65">Fictional conversation. Messages aren't delivered to people.</p>
+            <Link to="/lounge" className="mt-5 inline-block text-sm font-semibold text-paper underline underline-offset-2">Open demo chats →</Link>
+          </article>
+          <article className="min-w-0 rounded-md border-2 border-ink bg-card p-5">
+            <p className="eyebrow text-cardinal">Meet the example crew</p>
+            <div className="mt-4 flex flex-wrap -space-x-2">
+              {SAMPLE_PEOPLE.slice(0, 5).map((person, i) => <div key={person.id} title={person.name + " — fictional profile"} aria-label={person.name + " fictional profile"}
+                className={"grid h-11 w-11 place-items-center rounded-full border-2 border-paper font-mono text-xs font-bold " + (i % 2 ? "bg-cardinal text-paper" : "bg-navy text-paper")}>{person.initials}</div>)}
+            </div>
+            <h3 className="font-display mt-5 break-words text-2xl text-navy">{SAMPLE_PEOPLE.length} fictional profiles</h3>
+            <p className="mt-2 text-sm">Designers, developers and researchers collaborating on campus concept projects.</p>
+            <Link to="/studios" className="mt-5 inline-block text-sm font-semibold text-cardinal underline underline-offset-2">Meet the demo crew →</Link>
+          </article>
+        </div>
+      </section>
       <div className="mt-14 grid gap-8 lg:grid-cols-2">
         <section aria-labelledby="collab">
           <h2 id="collab" className="font-display mb-4 text-3xl text-navy">Requests for collaborators</h2>
