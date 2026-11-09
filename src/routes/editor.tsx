@@ -11,7 +11,7 @@ import { ProjectTile } from "@/components/project-art";
 import { formatTime, uid } from "@/lib/model";
 
 export const Route = createFileRoute("/editor")({
-  validateSearch: (s: Record<string, unknown>) => ({ id: typeof s.id === "string" ? s.id : undefined }),
+  validateSearch: (s: Record<string, unknown>): { id?: string } => typeof s.id === "string" ? { id: s.id } : {},
   head: () => ({ meta: [{ title: "Design Editor — The Yard Studio" }, { name: "description", content: "Edit a campus design concept with live preview." }, { property: "og:title", content: "Design Editor" }, { property: "og:description", content: "Live, local design editing." }] }),
   component: Editor,
 });
@@ -28,7 +28,7 @@ function Editor() {
         {projects.length ? <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">{projects.map((x) => <ProjectTile key={x.id} project={x} />)}</div> : <EmptyState title="No projects yet" />}
       </div>
     );
-  const set = (k: keyof typeof p.props, v: string) => actions.updateProps(p.id, { [k]: v });
+  const set = (k: "title" | "subtitle" | "cta" | "primary" | "accent" | "background", v: string) => actions.updateProps(p.id, { [k]: v });
   return (
     <div className="mx-auto max-w-7xl">
       <PageHeader eyebrow="Design editor · autosaved locally" title={p.name} actions={<>
