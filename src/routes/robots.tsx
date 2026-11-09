@@ -20,7 +20,7 @@ const STOPS = LANDMARKS.filter(pinned);
 const MESSAGES = ["Hello. I am a pretend helper robot.", "I can show practice information cards.", "For a real emergency, call 911.", "Practice complete. Thank you!"];
 
 function Robots() {
-  const [at, setAt] = useState(STOPS[0].id);
+  const [at, setAt] = useState(STOPS[0]?.id ?? "founders");
   const [msg, setMsg] = useState(0);
   const [log, setLog] = useState<string[]>([]);
   const place = STOPS.find((s) => s.id === at)!;
