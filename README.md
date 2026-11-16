@@ -50,3 +50,24 @@ cd <repository-name>
 npm i
 npm run dev
 ```
+
+
+## Accessibility preferences and usability study
+
+The application includes an **Accessibility Settings** route at \`/settings\`. Browser-local, opt-in spoken confirmations are off by default; screen-reader live-region updates do not depend on them. Display preferences include text size, high contrast, larger targets, focus styling, motion and spacing. Browser storage for accessibility preferences is separate from concept projects and reviews.
+
+The **Usability Test** route at \`/usability\` contains the four existing task-action missions plus six separate accessibility scenarios (speech, text scaling, keyboard, assistive technology, and nonvisual map use). Optional participant consent, anonymous code, qualitative notes, ease ratings and CSV export are local-only; some scenarios require self-report and real facilitator observation. The test interface **does not prove accessibility compliance**.
+
+See [Accessibility Audit and WCAG Traceability](docs/ACCESSIBILITY_USABILITY_AUDIT.md) and [Usability Study Protocol](docs/USABILITY_TEST_PROTOCOL.md).
+
+To validate a checkout with dependencies available:
+
+\`\`\`sh
+bun install --frozen-lockfile
+bunx tsc --noEmit
+bun run build
+bun run test
+bun run lint
+\`\`\`
+
+The feature code and new tests have been committed, but these commands and manual device/screen-reader testing must still be executed and recorded before declaring formal test readiness. Lovable's private preview may require signing in to the linked account.
