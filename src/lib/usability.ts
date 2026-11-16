@@ -7,9 +7,9 @@ export type Verification = "auto" | "self-report";
 export interface Scenario { id: string; title: string; instructions: string; verification: Verification; destination: "/settings" | "/editor" | "/map" | "/reviews" | "/studios"; }
 
 export const A11Y_SCENARIOS: Scenario[] = [
-  { id: "speech-on", title: "Turn on spoken confirmations", instructions: "Open Accessibility Settings and switch on “Speak action confirmations”. Press Test voice.", verification: "auto", destination: "/settings" },
+  { id: "speech-on", title: "Turn on spoken confirmations", instructions: "Open Accessibility Settings and switch on spoken action confirmations. Use Test voice separately if supported.", verification: "auto", destination: "/settings" },
   { id: "audio-text", title: "Confirm an action by audio and text", instructions: "With speech on, save a version in the Design Editor. Check that you hear the confirmation AND see the on-screen message.", verification: "self-report", destination: "/editor" },
-  { id: "typography", title: "Adjust text size or spacing", instructions: "Change the text size or turn on increased text spacing, then browse two pages.", verification: "auto", destination: "/settings" },
+  { id: "typography", title: "Adjust text size or spacing", instructions: "Change the text size or turn on increased text spacing. Then check readability on two pages; only the setting change is automatically tracked.", verification: "auto", destination: "/settings" },
   { id: "keyboard", title: "Keyboard-only workflow", instructions: "Without a mouse, use Tab, Shift+Tab, Enter and Space to open a review and post feedback. Note any place focus was lost or hidden.", verification: "self-report", destination: "/reviews" },
   { id: "assistive-tech", title: "Assistive technology check", instructions: "With NVDA, VoiceOver or TalkBack running, navigate the app and create a project. Note anything that was not announced or was confusing.", verification: "self-report", destination: "/studios" },
   { id: "map-directory", title: "Find a building without the map", instructions: "On the Area Map, use only the searchable building list to find Founders Library and open its details.", verification: "auto", destination: "/map" },
@@ -58,7 +58,7 @@ export const __resetUsabilityCache = () => { st = null; };
 const rec = (s: UsabilityState, id: string): ScenarioRecord => s.scenarios[id] ?? { done: false, ease: "", notes: "" };
 
 export const usability = {
-  setConsent(v: boolean) { save({ ...load(), consent: v }); },
+  setConsent(v: boolean) { save(v ? { ...load(), consent: true } : emptyUsability()); },
   setParticipant(code: string) { save({ ...load(), participantCode: code.slice(0, 40) }); },
   patchScenario(id: string, patch: Partial<ScenarioRecord>) { const s = load(); save({ ...s, scenarios: { ...s.scenarios, [id]: { ...rec(s, id), ...patch } } }); },
   /** Only for automatically observable scenarios; never called for self-report ones. */
@@ -66,7 +66,7 @@ export const usability = {
     const sc = A11Y_SCENARIOS.find((x) => x.id === id);
     if (!sc || sc.verification !== "auto" || typeof window === "undefined") return;
     const s = load();
-    if (rec(s, id).done) return;
+    if (!s.consent || rec(s, id).done) return;
     save({ ...s, scenarios: { ...s.scenarios, [id]: { ...rec(s, id), done: true } } });
   },
   patchMission(key: string, patch: Partial<{ ease: Ease; notes: string }>) { const s = load(); const cur = s.missionNotes[key] ?? { ease: "", notes: "" }; save({ ...s, missionNotes: { ...s.missionNotes, [key]: { ...cur, ...patch } } }); },
@@ -74,10 +74,16 @@ export const usability = {
   reset() { save(emptyUsability()); },
 };
 
-const csvCell = (v: string | number | boolean) => `"${String(v).replace(/"/g, '""')}"`;
+// Guard against spreadsheet formula injection when opening participant-supplied text in Excel/Sheets.
+const csvCell = (v: string | number | boolean) => {
+  const str = String(v);
+  const safe = /^[=+@\-\t\r]/.test(str) ? "'" + str : str;
+  return `"${safe.replace(/"/g, '""')}"`;
+};
 
 export function exportRows(u: UsabilityState, missions: { key: string; title: string; done: boolean }[]) {
   const rows: (string | number | boolean)[][] = [["type", "id", "title", "verification", "completed", "ease_1to5", "notes"]];
+  rows.push(["session", "participant_code", "Anonymous session code", "self-report", "", "", u.participantCode]);
   for (const m of missions) { const n = u.missionNotes[m.key] ?? { ease: "", notes: "" }; rows.push(["mission", m.key, m.title, "auto", m.done, n.ease, n.notes]); }
   for (const s of A11Y_SCENARIOS) { const r = rec(u, s.id); rows.push(["scenario", s.id, s.title, s.verification, r.done, r.ease, r.notes]); }
   rows.push(["posttest", "overall", "Overall ease", "self-report", "", u.post.overall, ""]);
