@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CheckCircle2, Circle, RotateCcw, ArrowRight, Download, ClipboardList, ShieldCheck } from "lucide-react";
+import { CheckCircle2, Circle, RotateCcw, ArrowRight, Download, ShieldCheck } from "lucide-react";
 import { PageHeader, DemoBadge } from "@/components/brand";
 import { Button } from "@/components/ui/button";
 import { actions, useAppState } from "@/lib/store";
