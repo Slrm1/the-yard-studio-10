@@ -6,7 +6,7 @@
 
 ## Evidence and limitations
 
-The repository includes a newly implemented Accessibility Settings route, visual and ARIA feedback, a speechSynthesis helper, a six-scenario usability-testing model, and an expanded Usability Test page. Code has been reviewed, but **build, lint, typecheck, automated test execution, live-browser evaluation, browser zoom/reflow, high-contrast rendering, and testing with NVDA, VoiceOver, or TalkBack are not confirmed**. Therefore the product is **NOT YET VERIFIED FOR FORMAL USER TESTING**. The existing preview URL may still serve an older or broken build until deployment verification.
+The repository includes a newly implemented Accessibility Settings route, visual and ARIA feedback, a speechSynthesis helper, a six-scenario usability-testing model, and an expanded Usability Test page. Code has been reviewed, but **build, lint, typecheck, automated test execution, authenticated in-app browser evaluation, browser zoom/reflow, high-contrast rendering, and testing with NVDA, VoiceOver, or TalkBack are not confirmed**. Therefore the product is **NOT YET VERIFIED FOR FORMAL USER TESTING**. The existing preview URL may still serve an older or broken build until deployment verification.
 
 Do not replace test evidence with visual assurances or an axe score: automated audits cannot establish complete accessibility.
 
@@ -42,6 +42,12 @@ Do not replace test evidence with visual assurances or an axe score: automated a
 - Six additional accessibility scenarios are clearly separated as observed actions or participant self-reports
 - Optional test participant consent, anonymous code, task notes/ease ratings, reflection, and manual CSV export
 - All emergency and robot functions clearly represented as **simulations only**
+
+## Browser QA attempt — 2026-11-16
+
+A live browser visit to the existing Lovable preview at `https://id-preview--72abc57c-d854-4fa2-b41e-0b619d3fc9de.lovable.app` tested the root, `/settings`, and `/usability`. Each redirected to `https://lovable.dev/login` for an unauthenticated visitor. This is an **access-control/preview-access limitation**, not evidence that the app's routes or controls failed after authentication. No settings toggles, persistence, speech playback, usability tasks, responsive layout, or accessible controls could be exercised in this attempt. Retest with an authorized session or an approved public staging release; do not use this result to claim feature functionality or WCAG conformance.
+
+The connected Lovable build agent reported an `out_of_credits` completion reason after saving initial changes. GitHub subsequently showed the additional usability page, automated-test source files, and research documents, but no successful full build/test run is established for this revision. The GitHub verification workflow is manual-only while Actions billing/spending limits are unresolved. Do not infer success from the existence of test files.
 
 ## Release and research gates
 
