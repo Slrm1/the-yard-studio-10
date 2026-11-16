@@ -37,6 +37,24 @@ Read each prompt **without revealing where to click**. Allow participants to use
 
 Do not count simply arriving at a page as proof a task was understood. Automated "complete" signals only establish a particular app action. The facilitator must separately observe independence, difficulty, and accessibility issues. Confirm browser-storage persistence with a refresh.
 
+## Post-test rating survey
+
+At the end of the session, let the participant answer seven short statements without coaching or suggesting preferred responses. Each statement has one selectable rating; all statements are worded positively, so a higher number always indicates a more favorable experience.
+
+**Agreement scale:** 1 = Strongly disagree (lowest), 2 = Disagree, 3 = Neither agree nor disagree, 4 = Agree, 5 = Strongly agree (strongest).
+
+1. Overall, Yard Studio was easy to use.
+2. It was easy to find the pages and tools I needed.
+3. The labels and instructions were clear.
+4. The text and controls were easy to see and read.
+5. I could tell when my actions were successful.
+6. I was able to complete the tasks without help.
+7. I would feel confident using Yard Studio on my own.
+
+Questions may be skipped, and a selected rating can be cleared. Two free-text questions are optional: what worked well, and what the participant would improve or change. Consent is required before ratings are stored locally. Answers persist in that browser's test session and are included in the manual CSV export as separate `posttest` rows. The overall question reuses the previous overall rating field to preserve older sessions.
+
+**Do not mix scales during analysis:** each individual mission/scenario asks about *task ease* (1 = Very difficult, 5 = Very easy), while these post-test statements use *agreement* (1 = Strongly disagree, 5 = Strongly agree). Neither kind of self-report is equivalent to an objective completion or accessibility measurement.
+
 ## Discussion questions
 
 - What did you expect to happen after clicking that button?
@@ -48,7 +66,7 @@ Do not count simply arriving at a page as proof a task was understood. Automated
 - Did the map directory let you access the same information without map interaction?
 - What would make you comfortable using this on your own?
 
-Use the 1–5 ease scale in the testing page as a **subjective rating**, not a measured accuracy score.
+Treat both the task-ease ratings and post-test agreement scores as **subjective ratings**, not objective usability measurements or measured accuracy scores.
 
 ## Recording template
 
