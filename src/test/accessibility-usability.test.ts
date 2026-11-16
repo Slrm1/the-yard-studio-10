@@ -4,7 +4,7 @@ import {
   sanitizePrefs, setPrefs,
 } from "@/lib/a11y-prefs";
 import {
-  __resetUsabilityCache, A11Y_SCENARIOS, USABILITY_KEY, getUsability, usability,
+  __resetUsabilityCache, A11Y_SCENARIOS, POST_SURVEY_QUESTIONS, USABILITY_KEY, getUsability, usability,
   toCSV, exportRows,
 } from "@/lib/usability";
 import { __resetSpeechDedup, speak, speechSupported, stopSpeaking } from "@/lib/speech";
@@ -108,6 +108,34 @@ describe("Local usability study", () => {
     usability.setConsent(false);
     expect(getUsability().participantCode).toBe("");
     expect(getUsability().scenarios).toEqual({});
+  });
+  it("saves and exports every five-point post-test survey rating", () => {
+    usability.setConsent(true);
+    usability.patchPostRating("overall", "5");
+    usability.patchPostRating("navigation", "4");
+    usability.patchPostRating("confidence", "2");
+    expect(getUsability().post.overall).toBe("5");
+    expect(getUsability().post.ratings.navigation).toBe("4");
+    expect(getUsability().post.ratings.confidence).toBe("2");
+    const rows = exportRows(getUsability(), []);
+    expect(rows.filter((r) => r[0] === "posttest" && POST_SURVEY_QUESTIONS.some((q) => q.id === r[1]))).toHaveLength(7);
+    expect(rows.some((r) => r[0] === "posttest" && r[1] === "confidence" && r[5] === "2")).toBe(true);
+    __resetUsabilityCache();
+    expect(getUsability().post.ratings.navigation).toBe("4");
+    usability.patchPostRating("navigation", "");
+    expect(getUsability().post.ratings.navigation).toBe("");
+  });
+  it("keeps older saved reflections and prevents new ratings without consent", () => {
+    window.localStorage.setItem(USABILITY_KEY, JSON.stringify({
+      version: 1, consent: true, participantCode: "old-session",
+      scenarios: {}, missionNotes: {}, post: { overall: "3", liked: "Useful", confusing: "" },
+    }));
+    __resetUsabilityCache();
+    expect(getUsability().post.overall).toBe("3");
+    expect(getUsability().post.ratings).toEqual({});
+    usability.setConsent(false);
+    usability.patchPostRating("overall", "5");
+    expect(getUsability().post.overall).toBe("");
   });
   it("exports a CSV with escaped and formula-safe participant notes", () => {
     usability.setConsent(true);
