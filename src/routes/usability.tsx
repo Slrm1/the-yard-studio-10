@@ -236,7 +236,11 @@ function Usability() {
         <Button className="mt-4" variant="outline" onClick={() => {
           actions.resetTasks();
           usability.reset();
-          notify.success("Test progress and notes reset; projects and accessibility settings preserved.");
+          if (usabilityStorageError) {
+            notify.error("Testing notes could not be saved to this browser. The reset may not persist after refresh.");
+          } else {
+            notify.success("Test progress and notes reset; projects and accessibility settings preserved.");
+          }
         }}><RotateCcw aria-hidden /> Reset testing session</Button>
       </section>
       <p className="mt-6 flex items-start gap-2 text-sm text-muted-foreground">
