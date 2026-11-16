@@ -2,7 +2,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import {
   Home, Building2, PenTool, Library, MessagesSquare, CalendarDays, ClipboardCheck,
-  IdCard, ListChecks, ShieldAlert, Map, Bot, Menu,
+  IdCard, ListChecks, ShieldAlert, Map, Bot, Menu, Settings,
 } from "lucide-react";
 import { Sheet, SheetContent, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -10,6 +10,7 @@ import { YMark } from "./brand";
 import { useAppState, actions } from "@/lib/store";
 import { ROLES, type Role } from "@/lib/model";
 import { cn } from "@/lib/utils";
+import { notify } from "@/lib/announce";
 
 const NAV = [
   { to: "/", label: "The Yard", icon: Home },
@@ -21,6 +22,7 @@ const NAV = [
   { to: "/reviews", label: "Review Queue", icon: ClipboardCheck },
   { to: "/profile", label: "My Bison Card", icon: IdCard },
   { to: "/usability", label: "Usability Test", icon: ListChecks },
+  { to: "/settings", label: "Accessibility Settings", icon: Settings },
 ] as const;
 
 const SAFETY = [
@@ -34,7 +36,7 @@ function RoleSwitch() {
   return (
     <div>
       <label htmlFor="role-switch" className="eyebrow text-paper/60">Demo role</label>
-      <Select value={role} onValueChange={(v) => actions.setRole(v as Role)}>
+      <Select value={role} onValueChange={(v) => { actions.setRole(v as Role); notify.success(`Role switched to ${ROLES.find((r) => r.id === v)?.label ?? v}`); }}>
         <SelectTrigger id="role-switch" className="mt-1 h-9 border-paper/25 bg-paper/5 text-paper">
           <SelectValue />
         </SelectTrigger>
@@ -48,7 +50,7 @@ function RoleSwitch() {
   );
 }
 
-function NavList({ onNavigate }: { onNavigate?: () => void }) {
+function NavList({ onNavigate }: { onNavigate?: (() => void) | undefined }) {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const isActive = (to: string) => (to === "/" ? path === "/" : path.startsWith(to));
   return (
@@ -94,7 +96,7 @@ function NavList({ onNavigate }: { onNavigate?: () => void }) {
   );
 }
 
-function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
+function SidebarBody({ onNavigate }: { onNavigate?: (() => void) | undefined }) {
   return (
     <div className="flex h-full flex-col gap-6 bg-navy-deep p-4 text-paper">
       <Link to="/" onClick={onNavigate} className="flex items-center gap-3">
@@ -116,19 +118,22 @@ function SidebarBody({ onNavigate }: { onNavigate?: () => void }) {
 export function AppShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="min-h-screen lg:grid lg:grid-cols-[256px_1fr]">
+    <div className="min-h-dvh lg:grid lg:grid-cols-[256px_1fr]">
       <a href="#main" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:bg-paper focus:p-2">Skip to content</a>
-      <aside className="sticky top-0 hidden h-screen lg:block">
+      <aside className="sticky top-0 hidden h-dvh lg:block">
         <SidebarBody />
       </aside>
       <header className="sticky top-0 z-40 flex items-center justify-between gap-2 bg-navy-deep px-3 py-2 text-paper lg:hidden">
         <button type="button" onClick={() => setOpen(true)} className="flex h-11 w-11 items-center justify-center rounded-md hover:bg-paper/10" aria-label="Open navigation">
           <Menu className="h-5 w-5" />
         </button>
-        <Link to="/" className="flex items-center gap-2"><YMark className="h-8 w-8" /><span className="font-display text-lg">The Yard Studio</span></Link>
+        <Link to="/" className="flex min-w-0 items-center gap-2"><YMark className="h-8 w-8 shrink-0" /><span className="font-display truncate text-lg">The Yard Studio</span></Link>
+        <div className="flex shrink-0 items-center gap-1">
+        <Link to="/settings" className="flex h-11 w-11 items-center justify-center rounded-md hover:bg-paper/10" aria-label="Accessibility settings"><Settings className="h-5 w-5" aria-hidden /></Link>
         <Link to="/emergency" className="flex min-h-11 items-center gap-1 rounded-md border-2 border-alert px-2 text-xs font-bold uppercase text-alert" aria-label="Emergency Mode (preparedness demo)">
           <ShieldAlert className="h-4 w-4" aria-hidden /> Prep
         </Link>
+        </div>
       </header>
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent side="left" className="w-72 border-none p-0">

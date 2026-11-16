@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
-import { toast } from "sonner";
+import { notify, announce } from "@/lib/announce";
 import { CheckCircle2, GitMerge, MessageSquare, RotateCcw, ThumbsDown } from "lucide-react";
 import { PageHeader, DemoBadge, EmptyState } from "@/components/brand";
 import { Button } from "@/components/ui/button";
@@ -31,20 +31,22 @@ function Reviews() {
     setActiveId(id);
     setComment("");
     if (id === "husa-header") actions.markHusaOpened();
+    const r = reviews.find((x) => x.id === id);
+    if (r) announce(`Opened review: ${r.title}`);
   };
   const submitComment = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!active) return;
-    if (!comment.trim()) { toast.error("Write feedback before posting"); return; }
+    if (!comment.trim()) { notify.error("Write feedback before posting"); return; }
     actions.commentReview(active.id, comment);
     setComment("");
-    toast.success("Feedback saved locally");
+    notify.success("Feedback saved locally");
   };
   const transition = (to: ReviewStatus) => {
     if (!active) return;
     const error = actions.transitionReview(active.id, to);
-    if (error) toast.error(error);
-    else toast.success("Review moved to " + statusLabel[to] + " (local demo)");
+    if (error) notify.error(error);
+    else notify.success("Review moved to " + statusLabel[to] + " (local demo)");
   };
   const may = (to: ReviewStatus) => active !== null && reviewBlockReason(role, active.status, to) === null;
 

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { toast } from "sonner";
+import { notify } from "@/lib/announce";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,7 +11,7 @@ import { ProjectTile } from "@/components/project-art";
 import { formatTime, uid } from "@/lib/model";
 
 export const Route = createFileRoute("/editor")({
-  validateSearch: (s: Record<string, unknown>): { id?: string } => typeof s.id === "string" ? { id: s.id } : {},
+  validateSearch: (s: Record<string, unknown>): { id?: string } => typeof s['id'] === "string" ? { id: s['id'] } : {},
   head: () => ({ meta: [{ title: "Design Editor — The Yard Studio" }, { name: "description", content: "Edit a campus design concept with live preview." }, { property: "og:title", content: "Design Editor" }, { property: "og:description", content: "Live, local design editing." }] }),
   component: Editor,
 });
@@ -32,9 +32,9 @@ function Editor() {
   return (
     <div className="mx-auto max-w-7xl">
       <PageHeader eyebrow="Design editor · autosaved locally" title={p.name} actions={<>
-        <Button variant="outline" onClick={() => setMobile((m) => !m)}>{mobile ? "Desktop" : "Mobile"} preview</Button>
-        <Button variant="outline" onClick={() => { actions.saveVersion(p.id, "Manual save"); toast.success("Version saved in this browser"); }}>Save version</Button>
-        <Button variant="cardinal" onClick={() => { actions.submitForReview(p.id, "Submitted from editor"); toast.success("Review request created (local)"); }}>Submit for review</Button>
+        <Button variant="outline" aria-pressed={mobile} onClick={() => { const next = !mobile; setMobile(next); notify.success(next ? "Mobile preview shown" : "Desktop preview shown"); }}>{mobile ? "Desktop" : "Mobile"} preview</Button>
+        <Button variant="outline" onClick={() => { actions.saveVersion(p.id, "Manual save"); notify.success("Version saved in this browser"); }}>Save version</Button>
+        <Button variant="cardinal" onClick={() => { actions.submitForReview(p.id, "Submitted from editor"); notify.success("Review request created in this local demo"); }}>Submit for review</Button>
       </>} />
       <div className="grid gap-6 lg:grid-cols-[1fr_320px]">
         <div className="flex justify-center rounded-md border-2 border-ink bg-muted p-4 paper-grain">
@@ -66,7 +66,7 @@ function Editor() {
           <div>
             <p className="eyebrow mb-2">Version history</p>
             <ul className="max-h-40 space-y-1 overflow-auto text-sm">{p.versions.map((v) => (
-              <li key={v.id} className="flex justify-between gap-2"><span>{v.label} · {formatTime(v.at)}</span><button className="text-cardinal underline" onClick={() => actions.restoreVersion(p.id, v.id)}>Restore</button></li>
+              <li key={v.id} className="flex justify-between gap-2"><span>{v.label} · {formatTime(v.at)}</span><button type="button" className="min-h-9 text-cardinal underline" onClick={() => { actions.restoreVersion(p.id, v.id); notify.success(`Restored version: ${v.label}`); }}>Restore<span className="sr-only"> {v.label}, {formatTime(v.at)}</span></button></li>
             ))}</ul>
           </div>
           <div>

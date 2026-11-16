@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
-import { toast } from "sonner";
+import { notify } from "@/lib/announce";
 import { MessageCircle, Plus, Search, Send } from "lucide-react";
 import { PageHeader, DemoBadge, EmptyState } from "@/components/brand";
 import { Button } from "@/components/ui/button";
@@ -43,15 +43,15 @@ function Lounge() {
     setNewOpen(false);
     setQuery("");
     setError("");
-    toast.success("Discussion saved in this browser");
+    notify.success("Discussion saved in this browser");
   };
   const comment = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!active) return;
-    if (!reply.trim()) { toast.error("Write a reply before posting"); return; }
+    if (!reply.trim()) { notify.error("Write a reply before posting"); return; }
     actions.commentThread(active.id, reply);
     setReply("");
-    toast.success("Reply added locally");
+    notify.success("Reply added locally");
   };
 
   return (

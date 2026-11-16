@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { toast } from "sonner";
+import { notify } from "@/lib/announce";
 import { Layers3, Plus, Search } from "lucide-react";
 import { PageHeader, EmptyState, DemoBadge } from "@/components/brand";
 import { Button } from "@/components/ui/button";
@@ -29,9 +29,9 @@ function Library() {
   }, [query]);
   const preview = BLOCKS.find((b) => b.id === selectedBlock) ?? BLOCKS[0];
   const add = (id: string) => {
-    if (!project) { toast.error("Create a project first"); return; }
+    if (!project) { notify.error("Create a project first"); return; }
     actions.addBlock(project.id, id);
-    toast.success("Component added to " + project.name);
+    notify.success("Component added to " + project.name);
   };
 
   return (

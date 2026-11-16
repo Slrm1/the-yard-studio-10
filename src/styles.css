@@ -131,3 +131,53 @@
 
 .leaflet-container { font-family: var(--font-sans); }
 .yard-pin { background: transparent; border: none; }
+
+/* ---------- Accessibility preferences (set on <html> by A11yRuntime) ---------- */
+html[data-text-size="large"] { font-size: 112.5%; }
+html[data-text-size="xlarge"] { font-size: 131.25%; }
+
+html[data-contrast="high"] {
+  --muted-foreground: oklch(0.25 0.03 245);
+  --border: oklch(0.3 0.03 245);
+  --input: oklch(0.3 0.03 245);
+  --cardinal: oklch(0.48 0.2 22);
+  --muted: oklch(0.97 0.005 85);
+  --card: oklch(1 0 0);
+  --background: oklch(1 0 0);
+}
+html[data-contrast="high"] .text-paper\/50,
+html[data-contrast="high"] .text-paper\/60,
+html[data-contrast="high"] .text-paper\/70,
+html[data-contrast="high"] .text-paper\/75,
+html[data-contrast="high"] .text-paper\/80 { color: var(--paper) !important; }
+html[data-contrast="high"] a { text-decoration-thickness: 2px; }
+@media (prefers-contrast: more) {
+  :root { --muted-foreground: oklch(0.3 0.03 245); --border: oklch(0.4 0.03 245); }
+}
+
+html[data-focus="strong"] :focus-visible {
+  outline: 4px solid var(--ink) !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 0 7px var(--alert) !important;
+}
+
+html[data-targets="large"] button,
+html[data-targets="large"] [role="button"],
+html[data-targets="large"] a[href],
+html[data-targets="large"] input:not([type="checkbox"]):not([type="radio"]),
+html[data-targets="large"] select { min-height: 44px; min-width: 44px; }
+
+html[data-spacing="wide"] body {
+  line-height: 1.5;
+  letter-spacing: 0.12em;
+  word-spacing: 0.16em;
+}
+html[data-spacing="wide"] p { margin-bottom: 0.5em; }
+html[data-spacing="wide"] p, html[data-spacing="wide"] li { line-height: 1.6 !important; }
+
+html[data-motion="reduce"] *, html[data-motion="reduce"] *::before, html[data-motion="reduce"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}

@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppShell } from "@/components/app-shell";
 import { Toaster } from "@/components/ui/sonner";
+import { LiveAnnouncer, A11yRuntime } from "@/components/announcer";
 
 function NotFoundComponent() {
   return (
@@ -128,6 +129,8 @@ function RootComponent() {
         <Outlet />
       </AppShell>
       <Toaster />
+      <LiveAnnouncer />
+      <A11yRuntime />
     </QueryClientProvider>
   );
 }

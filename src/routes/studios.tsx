@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, type FormEvent } from "react";
-import { toast } from "sonner";
+import { notify } from "@/lib/announce";
 import { Building2, Mail, Plus, Users } from "lucide-react";
 import { PageHeader, DemoBadge } from "@/components/brand";
 import { Button } from "@/components/ui/button";
@@ -41,7 +41,7 @@ function Studios() {
     setName("");
     setTagline("");
     setCreateError("");
-    toast.success("Studio created in this browser");
+    notify.success("Studio created in this browser");
   };
   const invite = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -56,7 +56,7 @@ function Studios() {
     setInviteError("");
     setEmail("");
     setInviteOrg(null);
-    toast.success("Simulated invitation saved — no email was sent");
+    notify.success("Simulated invitation saved — no email was sent");
   };
 
   return (

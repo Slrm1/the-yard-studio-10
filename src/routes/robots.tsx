@@ -1,3 +1,4 @@
+import { announce } from "@/lib/announce";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { PageHeader } from "@/components/brand";
@@ -24,7 +25,7 @@ function Robots() {
   const [msg, setMsg] = useState(0);
   const [log, setLog] = useState<string[]>([]);
   const place = STOPS.find((s) => s.id === at)!;
-  const say = (t: string) => setLog((l) => [t, ...l].slice(0, 8));
+  const say = (t: string) => { setLog((l) => [t, ...l].slice(0, 8)); announce(`${t}. Simulation only.`); };
   return (
     <div className="mx-auto max-w-7xl">
       <SimulationBanner />

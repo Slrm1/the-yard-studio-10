@@ -19,6 +19,7 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ReviewsRouteImport } from './routes/reviews'
 import { Route as RobotsRouteImport } from './routes/robots'
 import { Route as SeasonalRouteImport } from './routes/seasonal'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as StudiosRouteImport } from './routes/studios'
 import { Route as UsabilityRouteImport } from './routes/usability'
 
@@ -72,6 +73,11 @@ const SeasonalRoute = SeasonalRouteImport.update({
   path: '/seasonal',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StudiosRoute = StudiosRouteImport.update({
   id: '/studios',
   path: '/studios',
@@ -94,6 +100,7 @@ export interface FileRoutesByFullPath {
   '/reviews': typeof ReviewsRoute
   '/robots': typeof RobotsRoute
   '/seasonal': typeof SeasonalRoute
+  '/settings': typeof SettingsRoute
   '/studios': typeof StudiosRoute
   '/usability': typeof UsabilityRoute
 }
@@ -108,6 +115,7 @@ export interface FileRoutesByTo {
   '/reviews': typeof ReviewsRoute
   '/robots': typeof RobotsRoute
   '/seasonal': typeof SeasonalRoute
+  '/settings': typeof SettingsRoute
   '/studios': typeof StudiosRoute
   '/usability': typeof UsabilityRoute
 }
@@ -123,6 +131,7 @@ export interface FileRoutesById {
   '/reviews': typeof ReviewsRoute
   '/robots': typeof RobotsRoute
   '/seasonal': typeof SeasonalRoute
+  '/settings': typeof SettingsRoute
   '/studios': typeof StudiosRoute
   '/usability': typeof UsabilityRoute
 }
@@ -139,6 +148,7 @@ export interface FileRouteTypes {
     | '/reviews'
     | '/robots'
     | '/seasonal'
+    | '/settings'
     | '/studios'
     | '/usability'
   fileRoutesByTo: FileRoutesByTo
@@ -153,6 +163,7 @@ export interface FileRouteTypes {
     | '/reviews'
     | '/robots'
     | '/seasonal'
+    | '/settings'
     | '/studios'
     | '/usability'
   id:
@@ -167,6 +178,7 @@ export interface FileRouteTypes {
     | '/reviews'
     | '/robots'
     | '/seasonal'
+    | '/settings'
     | '/studios'
     | '/usability'
   fileRoutesById: FileRoutesById
@@ -182,6 +194,7 @@ export interface RootRouteChildren {
   ReviewsRoute: typeof ReviewsRoute
   RobotsRoute: typeof RobotsRoute
   SeasonalRoute: typeof SeasonalRoute
+  SettingsRoute: typeof SettingsRoute
   StudiosRoute: typeof StudiosRoute
   UsabilityRoute: typeof UsabilityRoute
 }
@@ -258,6 +271,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SeasonalRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/studios': {
       id: '/studios'
       path: '/studios'
@@ -286,6 +306,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReviewsRoute: ReviewsRoute,
   RobotsRoute: RobotsRoute,
   SeasonalRoute: SeasonalRoute,
+  SettingsRoute: SettingsRoute,
   StudiosRoute: StudiosRoute,
   UsabilityRoute: UsabilityRoute,
 }

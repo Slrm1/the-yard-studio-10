@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { toast } from "sonner";
+import { notify } from "@/lib/announce";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,7 +43,7 @@ export function NewProjectDialog({
         ? { title: name, subtitle: "Concept event page for Spring Fest on the Yard.", cta: "RSVP", primary: "#E51937", accent: "#003352", schedule: [{ id: "s1", time: "Fri 4 PM", label: "Opening set (sample)" }] }
         : undefined;
     const id = actions.createProject({ name, orgId: org, season: s, ...(template ? { template } : {}) });
-    toast.success("Project created and saved in this browser");
+    notify.success("Project created and saved in this browser");
     setOpen(false);
     setName(defaultName);
     onCreated?.(id);

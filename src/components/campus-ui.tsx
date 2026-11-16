@@ -1,3 +1,5 @@
+import { usability } from "@/lib/usability";
+import { announce } from "@/lib/announce";
 import { lazy, Suspense, useState, type ReactNode } from "react";
 import { ClientOnly } from "@tanstack/react-router";
 import { ExternalLink, LocateFixed, Phone, Search } from "lucide-react";
@@ -69,7 +71,7 @@ export function LandmarkDirectory({ selectedId, onSelect, extra }: { selectedId:
       <ul className="space-y-2">
         {list.map((l) => (
           <li key={l.id}>
-            <button type="button" onClick={() => onSelect(l.id)} aria-pressed={selectedId === l.id}
+            <button type="button" onClick={() => { onSelect(l.id); if (l.id === "founders") usability.markAuto("map-directory"); announce(`Selected ${l.name}. Details shown below.`); }} aria-pressed={selectedId === l.id}
               className={cn("w-full rounded-md border p-3 text-left hover:bg-accent", selectedId === l.id ? "border-2 border-cardinal bg-card" : "bg-card")}>
               <span className="block font-semibold break-words">{l.name}</span>
               <span className="eyebrow text-muted-foreground">{l.category}{pinned(l) ? "" : " · no pin (area)"}</span>

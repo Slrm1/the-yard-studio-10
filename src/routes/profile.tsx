@@ -1,3 +1,4 @@
+import { notify } from "@/lib/announce";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Activity, FolderKanban, GitPullRequest, IdCard, Users } from "lucide-react";
 import { PageHeader, DemoBadge, YMark } from "@/components/brand";
@@ -33,7 +34,7 @@ function Profile() {
           </div>
           <div className="p-5">
             <label htmlFor="profile-role" className="block text-sm font-semibold">Try another demo role</label>
-            <select id="profile-role" value={role} onChange={(e) => actions.setRole(e.target.value as Role)} className="mt-2 h-11 w-full rounded-md border bg-background px-3 text-sm">
+            <select id="profile-role" value={role} onChange={(e) => { actions.setRole(e.target.value as Role); notify.success(`Role switched to ${e.target.selectedOptions[0]?.text ?? e.target.value}`); }} className="mt-2 h-11 w-full rounded-md border bg-background px-3 text-sm">
               {ROLES.map((r) => <option key={r.id} value={r.id}>{r.label}</option>)}
             </select>
             <p className="mt-3 text-sm text-muted-foreground">{current?.blurb}</p>
