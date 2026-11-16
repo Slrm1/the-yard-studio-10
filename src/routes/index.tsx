@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAppState } from "@/lib/store";
 import { ProjectTile } from "@/components/project-art";
+import { CampusImage, CampusPhotoCredit } from "@/components/campus-photo";
+import { CAMPUS_PHOTOS, FEATURED_CAMPUS_PHOTOS } from "@/lib/campus-photos";
 import { NewProjectDialog } from "@/components/new-project-dialog";
 import { EmptyState, YMark } from "@/components/brand";
 import { formatTime } from "@/lib/model";
@@ -52,6 +54,33 @@ function TheYard() {
           </div>
         </div>
         <img src={heroArt} width={1280} height={896} alt="Illustration of students sketching interface designs together on a campus lawn" className="h-64 w-full object-cover md:h-full" />
+      </section>
+
+      <section className="mb-12" aria-labelledby="campus-snapshots">
+        <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="eyebrow text-cardinal">Scenes from Howard University</p>
+            <h2 id="campus-snapshots" className="font-display mt-1 text-3xl text-navy sm:text-4xl">Campus snapshots</h2>
+          </div>
+          <Link to="/map" className="text-sm font-semibold text-cardinal underline underline-offset-4">Explore the campus map →</Link>
+        </div>
+        <p className="mb-4 text-xs text-muted-foreground">Real Howard campus photography, shown for atmosphere. The projects, people and events in this demo are fictional.</p>
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+          {FEATURED_CAMPUS_PHOTOS.slice(0, 4).map((id) => {
+            const photo = CAMPUS_PHOTOS[id];
+            return (
+              <figure key={id} className="min-w-0 overflow-hidden rounded-md border bg-card">
+                <div className="aspect-[4/3] overflow-hidden bg-navy">
+                  <CampusImage photo={photo} className="h-full w-full object-cover" />
+                </div>
+                <figcaption className="p-3">
+                  <p className="font-semibold leading-tight text-navy">{photo.title}</p>
+                  <CampusPhotoCredit photo={photo} className="mt-1 block text-muted-foreground" />
+                </figcaption>
+              </figure>
+            );
+          })}
+        </div>
       </section>
 
       <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">

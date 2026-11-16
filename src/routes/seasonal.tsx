@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { NewProjectDialog } from "@/components/new-project-dialog";
 import { actions, useAppState } from "@/lib/store";
 import { SAMPLE_EVENTS } from "@/lib/showcase";
+import { CAMPUS_PHOTOS } from "@/lib/campus-photos";
+import { CampusImage, CampusPhotoCredit } from "@/components/campus-photo";
 import type { Season } from "@/lib/model";
 
 export const Route = createFileRoute("/seasonal")({
@@ -33,10 +35,17 @@ function Seasonal() {
           const events = SAMPLE_EVENTS.filter((event) => event.season === room.id);
           return <section key={room.id} className="min-w-0 overflow-hidden rounded-md border-2 border-ink bg-card shadow-block">
             <div className={"relative min-h-52 overflow-hidden p-6 sm:p-8 " + room.tone}>
+              <div className="pointer-events-none absolute inset-0 opacity-20" aria-hidden="true">
+                <CampusImage photo={room.id === "homecoming" ? CAMPUS_PHOTOS.quad : CAMPUS_PHOTOS.courtyard} decorative />
+              </div>
               <Sparkles className="absolute right-5 top-5 h-8 w-8 opacity-60" aria-hidden />
-              <p className="eyebrow opacity-75">{room.eyebrow}</p>
-              <h2 className="font-display mt-6 break-words text-5xl leading-tight sm:text-6xl">{room.name}</h2>
-              <p className="mt-3 max-w-md text-sm leading-relaxed opacity-90">{room.blurb}</p>
+              <p className="eyebrow relative opacity-75">{room.eyebrow}</p>
+              <h2 className="font-display relative mt-6 break-words text-5xl leading-tight sm:text-6xl">{room.name}</h2>
+              <p className="relative mt-3 max-w-md text-sm leading-relaxed opacity-90">{room.blurb}</p>
+            </div>
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b bg-cream px-5 py-2 text-muted-foreground">
+              <CampusPhotoCredit photo={room.id === "homecoming" ? CAMPUS_PHOTOS.quad : CAMPUS_PHOTOS.courtyard} />
+              <span className="text-xs">Real campus photo · fictional event concepts below</span>
             </div>
             <div className="p-5 sm:p-6">
               <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
