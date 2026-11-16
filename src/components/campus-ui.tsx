@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CATEGORIES, LANDMARKS, OFFICIAL_MAP_URL, filterLandmarks, pinned, type Category, type Landmark } from "@/lib/campus";
 import { cn } from "@/lib/utils";
+import { LandmarkPhoto } from "@/components/campus-photo";
 
 const CampusMap = lazy(() => import("./campus-map"));
 
@@ -80,6 +81,7 @@ export function LandmarkDirectory({ selectedId, onSelect, extra }: { selectedId:
               <div className="mt-1 rounded-md border bg-cream p-3 text-sm">
                 <p className="font-semibold break-words">Official name: {l.officialName}</p>
                 <p className="mt-1">{l.description}</p>
+                <LandmarkPhoto landmarkId={l.id} />
                 {extra?.(l)}
                 <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
                   {l.officialUrl && <a className="text-cardinal underline" href={l.officialUrl} target="_blank" rel="noopener noreferrer">Official Howard page</a>}
