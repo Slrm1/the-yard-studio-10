@@ -3,6 +3,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Activity, FolderKanban, GitPullRequest, IdCard, Users } from "lucide-react";
 import { PageHeader, DemoBadge, YMark } from "@/components/brand";
 import { Button } from "@/components/ui/button";
+import { CampusImage, CampusPhotoCredit } from "@/components/campus-photo";
+import { CAMPUS_PHOTOS } from "@/lib/campus-photos";
 import { ROLES, roleLabel, formatTime, type Role } from "@/lib/model";
 import { actions, useAppState } from "@/lib/store";
 
@@ -25,6 +27,10 @@ function Profile() {
       </PageHeader>
       <div className="grid gap-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.2fr)]">
         <section className="min-w-0 overflow-hidden rounded-md border-2 border-ink bg-card shadow-block">
+          <div className="h-36 overflow-hidden bg-navy">
+            <CampusImage photo={CAMPUS_PHOTOS.arch} decorative />
+          </div>
+          <p className="bg-cream px-6 py-2 text-muted-foreground"><CampusPhotoCredit photo={CAMPUS_PHOTOS.arch} /></p>
           <div className="bg-navy-deep p-6 text-paper">
             <div className="flex min-w-0 items-center justify-between gap-3"><YMark className="h-14 w-14 shrink-0" /><DemoBadge className="text-paper">Demo profile</DemoBadge></div>
             <p className="eyebrow mt-5 text-paper/70">The Yard Studio</p>
