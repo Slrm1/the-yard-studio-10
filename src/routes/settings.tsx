@@ -29,6 +29,7 @@ const LABELS: Partial<Record<keyof A11yPrefs, string>> = {
 };
 
 function update(patch: Partial<A11yPrefs>, message: string) {
+  if (patch.speakActions === false || patch.speakNavigation === false) stopSpeaking();
   const ok = setPrefs(patch);
   if (patch.speakActions) usability.markAuto("speech-on");
   if (patch.textSize !== undefined || patch.textSpacing !== undefined) usability.markAuto("typography");
