@@ -16,6 +16,19 @@ export const A11Y_SCENARIOS: Scenario[] = [
 ];
 
 export type Ease = "" | "1" | "2" | "3" | "4" | "5";
+
+/** Positive statements use one consistent five-point agreement scale. */
+export const POST_SURVEY_QUESTIONS = [
+  { id: "overall", text: "Overall, Yard Studio was easy to use." },
+  { id: "navigation", text: "It was easy to find the pages and tools I needed." },
+  { id: "instructions", text: "The labels and instructions were clear." },
+  { id: "readability", text: "The text and controls were easy to see and read." },
+  { id: "feedback", text: "I could tell when my actions were successful." },
+  { id: "independence", text: "I was able to complete the tasks without help." },
+  { id: "confidence", text: "I would feel confident using Yard Studio on my own." },
+] as const;
+
+export type PostQuestionId = (typeof POST_SURVEY_QUESTIONS)[number]["id"];
 export interface ScenarioRecord { done: boolean; ease: Ease; notes: string; }
 export interface UsabilityState {
   version: 1;
@@ -23,11 +36,11 @@ export interface UsabilityState {
   participantCode: string;
   scenarios: Record<string, ScenarioRecord>;
   missionNotes: Record<string, { ease: Ease; notes: string }>;
-  post: { overall: Ease; liked: string; confusing: string; };
+  post: { overall: Ease; ratings: Partial<Record<PostQuestionId, Ease>>; liked: string; confusing: string; };
 }
 
 export const emptyUsability = (): UsabilityState => ({
-  version: 1, consent: false, participantCode: "", scenarios: {}, missionNotes: {}, post: { overall: "", liked: "", confusing: "" },
+  version: 1, consent: false, participantCode: "", scenarios: {}, missionNotes: {}, post: { overall: "", ratings: {}, liked: "", confusing: "" },
 });
 
 let st: UsabilityState | null = null;
@@ -41,7 +54,7 @@ function load(): UsabilityState {
   try {
     const raw = window.localStorage.getItem(USABILITY_KEY);
     const p = raw ? JSON.parse(raw) : null;
-    st = p && p.version === 1 ? { ...emptyUsability(), ...p } : emptyUsability();
+    st = p && p.version === 1 ? { ...emptyUsability(), ...p, post: { ...emptyUsability().post, ...(p.post ?? {}) } } : emptyUsability();
   } catch { st = emptyUsability(); }
   return st!;
 }
@@ -70,7 +83,16 @@ export const usability = {
     save({ ...s, scenarios: { ...s.scenarios, [id]: { ...rec(s, id), done: true } } });
   },
   patchMission(key: string, patch: Partial<{ ease: Ease; notes: string }>) { const s = load(); const cur = s.missionNotes[key] ?? { ease: "", notes: "" }; save({ ...s, missionNotes: { ...s.missionNotes, [key]: { ...cur, ...patch } } }); },
-  patchPost(patch: Partial<UsabilityState["post"]>) { const s = load(); save({ ...s, post: { ...s.post, ...patch } }); },
+  patchPost(patch: Partial<UsabilityState["post"]>) { const s = load(); if (!s.consent) return; save({ ...s, post: { ...s.post, ...patch } }); },
+  patchPostRating(id: PostQuestionId, rating: Ease) {
+    const s = load();
+    if (!s.consent) return;
+    if (id === "overall") {
+      save({ ...s, post: { ...s.post, overall: rating } });
+    } else {
+      save({ ...s, post: { ...s.post, ratings: { ...s.post.ratings, [id]: rating } } });
+    }
+  },
   reset() { save(emptyUsability()); },
 };
 
@@ -86,7 +108,10 @@ export function exportRows(u: UsabilityState, missions: { key: string; title: st
   rows.push(["session", "participant_code", "Anonymous session code", "self-report", "", "", u.participantCode]);
   for (const m of missions) { const n = u.missionNotes[m.key] ?? { ease: "", notes: "" }; rows.push(["mission", m.key, m.title, "auto", m.done, n.ease, n.notes]); }
   for (const s of A11Y_SCENARIOS) { const r = rec(u, s.id); rows.push(["scenario", s.id, s.title, s.verification, r.done, r.ease, r.notes]); }
-  rows.push(["posttest", "overall", "Overall ease", "self-report", "", u.post.overall, ""]);
+  for (const q of POST_SURVEY_QUESTIONS) {
+    const rating = q.id === "overall" ? u.post.overall : (u.post.ratings?.[q.id] ?? "");
+    rows.push(["posttest", q.id, q.text, "self-report", "", rating, ""]);
+  }
   rows.push(["posttest", "liked", "What worked well", "self-report", "", "", u.post.liked]);
   rows.push(["posttest", "confusing", "What was confusing", "self-report", "", "", u.post.confusing]);
   return rows;
