@@ -96,7 +96,7 @@ describe("Local usability study", () => {
     expect(getUsability().scenarios["speech-on"]).toBeUndefined();
     usability.setConsent(true);
     usability.markAuto("speech-on");
-    expect(getUsability().scenarios["speech-on"].done).toBe(true);
+    expect(getUsability().scenarios["speech-on"]?.done).toBe(true);
     usability.markAuto("assistive-tech");
     expect(getUsability().scenarios["assistive-tech"]).toBeUndefined();
     expect(A11Y_SCENARIOS.find((s) => s.id === "assistive-tech")?.verification).toBe("self-report");
