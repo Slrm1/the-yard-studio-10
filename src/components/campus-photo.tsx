@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { CampusPhoto } from "@/lib/campus-photos";
+import { photoForLandmark, type CampusPhoto } from "@/lib/campus-photos";
 import { cn } from "@/lib/utils";
 
 /** A real campus photograph, with a readable fallback when Wikimedia is unreachable. */
@@ -44,5 +44,22 @@ export function CampusPhotoCredit({ photo, className }: { photo: CampusPhoto; cl
         className="underline underline-offset-2 hover:opacity-80">{photo.license}</a>
       {" · responsive crop"}
     </span>
+  );
+}
+
+/** Only show a building photograph when it matches the selected map place. */
+export function LandmarkPhoto({ landmarkId }: { landmarkId: string }) {
+  const photo = photoForLandmark(landmarkId);
+  if (!photo) return null;
+  return (
+    <figure className="mt-3 overflow-hidden rounded-md border bg-card">
+      <div className="aspect-[16/9] overflow-hidden bg-navy">
+        <CampusImage photo={photo} />
+      </div>
+      <figcaption className="p-2 text-xs text-muted-foreground">
+        <span className="block font-semibold text-foreground">{photo.title}</span>
+        <CampusPhotoCredit photo={photo} className="mt-1 block" />
+      </figcaption>
+    </figure>
   );
 }
