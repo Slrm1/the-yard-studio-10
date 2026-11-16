@@ -1,5 +1,7 @@
 # The Yard Studio (10)
 
+https://lovable.dev/projects/72abc57c-d854-4fa2-b41e-0b619d3fc9de
+
 Build a polished, FUNCTIONAL Lovable web app called "The Yard Studio — Bison Built. Yard Born." for a student HCI project at Howard University. THIS IS NOT A CREATIVE AGENCY. It is a collaborative UI design workspace (think Figma/Whimsical for campus teams), PLUS a separate robot-assisted emergency preparedness demo.
 
 The user ALREADY HAS a functional single-file reference MVP with this same concept, whose design to recreate is: gorgeous editorial Howard-inspired, deep Bison blue #003352 + cardinal red #E51937 + paper cream/white, commanding oversized uppercase typography with a hero "BISON BUILT. YARD BORN.", energetic campus project showcase tiles, premium art-directed visuals, collegiate photography/illustration, compact well-structured product side navigation. Not bland generic admin cards, not AI slop. Mobile-first with desktop polish. Independent student project — do not claim official Howard endorsement. Bold accents balanced with generous whitespace. Use images only if appropriate and robust.
