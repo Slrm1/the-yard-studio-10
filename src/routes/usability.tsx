@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { actions, useAppState } from "@/lib/store";
 import type { TaskFlags } from "@/lib/model";
 import {
-  A11Y_SCENARIOS, exportRows, toCSV, useUsability, usability, usabilityStorageError,
-  type Ease, type Scenario,
+  A11Y_SCENARIOS, POST_SURVEY_QUESTIONS, exportRows, toCSV, useUsability, usability, usabilityStorageError,
+  type Ease, type Scenario, type PostQuestionId,
 } from "@/lib/usability";
 import { notify } from "@/lib/announce";
 
@@ -43,6 +43,44 @@ function EaseInput({ id, value, onChange, disabled = false }: { id: string; valu
         {EASE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
     </div>
+  );
+}
+
+const AGREEMENT_SCALE = [
+  { value: "1", label: "Strongly disagree" },
+  { value: "2", label: "Disagree" },
+  { value: "3", label: "Neither agree nor disagree" },
+  { value: "4", label: "Agree" },
+  { value: "5", label: "Strongly agree" },
+] as const;
+
+function SurveyQuestion({ id, question, number, value, onChange, disabled }: {
+  id: PostQuestionId; question: string; number: number; value: Ease;
+  onChange: (v: Ease) => void; disabled: boolean;
+}) {
+  return (
+    <fieldset disabled={disabled} className="min-w-0 rounded-md border bg-card p-4">
+      <legend className="px-1 text-sm font-semibold leading-relaxed">{number}. {question}</legend>
+      <div className="mt-3 grid grid-cols-5 gap-2">
+        {AGREEMENT_SCALE.map(({ value: option, label }) => (
+          <label key={option} className="block cursor-pointer">
+            <input type="radio" name={"post-rating-" + id} value={option}
+              checked={value === option} onChange={() => onChange(option)}
+              aria-label={option + " — " + label} className="peer sr-only" />
+            <span aria-hidden="true" className="flex min-h-12 items-center justify-center rounded-md border-2 border-ink/25 bg-background text-base font-bold text-navy transition-colors peer-checked:border-navy peer-checked:bg-navy peer-checked:text-paper peer-focus-visible:outline peer-focus-visible:outline-4 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-cardinal">
+              {option}
+            </span>
+          </label>
+        ))}
+      </div>
+      <div className="mt-2 flex justify-between gap-3 text-xs text-muted-foreground">
+        <span>1 = Strongly disagree</span>
+        <span className="text-right">5 = Strongly agree</span>
+      </div>
+      {value && <button type="button" className="mt-3 min-h-11 text-sm font-semibold text-cardinal underline underline-offset-2" onClick={() => onChange("")}>
+        Clear response
+      </button>}
+    </fieldset>
   );
 }
 
@@ -93,6 +131,7 @@ function Usability() {
   const u = useUsability();
   const completed = MISSIONS.filter((m) => tasks[m.key]).length;
   const accessibilityDone = A11Y_SCENARIOS.filter((s) => u.scenarios[s.id]?.done).length;
+  const surveyAnswered = POST_SURVEY_QUESTIONS.filter((q) => q.id === "overall" ? !!u.post.overall : !!u.post.ratings?.[q.id]).length;
 
   const exportSession = () => {
     if (!u.consent) return;
@@ -208,25 +247,45 @@ function Usability() {
         </div>
       </section>
 
-      <section className="mb-8 rounded-md border bg-cream p-5" aria-labelledby="reflection">
-        <h2 id="reflection" className="font-display text-3xl text-navy">Post-test reflection</h2>
-        <p className="mt-2 text-sm">Capture the participant's perspective in their own words. These are opinions, not invented usability measurements.</p>
-        <div className="mt-4 space-y-4">
-          <EaseInput id="overall-ease" value={u.post.overall} disabled={!u.consent} onChange={(overall) => usability.patchPost({ overall })} />
-          <div>
-            <label htmlFor="liked" className="block text-sm font-semibold">What worked well?</label>
-            <textarea id="liked" disabled={!u.consent} value={u.post.liked} maxLength={1500} rows={3}
-              onChange={(e) => usability.patchPost({ liked: e.target.value })}
-              className="mt-1 w-full rounded-md border bg-background p-3 text-sm" />
+      <section className="mb-8 rounded-md border-2 border-ink bg-cream p-5" aria-labelledby="reflection">
+        <h2 id="reflection" className="font-display text-3xl text-navy">Post-test survey</h2>
+        <p className="mt-2 max-w-3xl text-sm leading-relaxed">
+          After completing the tasks, choose one rating for each statement. 1 means strongly disagree (lowest);
+          5 means strongly agree (strongest). There are no right or wrong answers. You may skip any question.
+        </p>
+        <p className="mt-3 text-sm font-semibold" aria-live="polite">
+          {surveyAnswered} of {POST_SURVEY_QUESTIONS.length} survey questions answered
+        </p>
+        {!u.consent && <p className="mt-2 text-sm text-cardinal">
+          Agree to local feedback collection in the Before testing section to enable the survey.
+        </p>}
+        <div className="mt-5 space-y-4">
+          {POST_SURVEY_QUESTIONS.map((q, i) => (
+            <SurveyQuestion key={q.id} id={q.id} question={q.text} number={i + 1}
+              disabled={!u.consent}
+              value={q.id === "overall" ? u.post.overall : (u.post.ratings?.[q.id] ?? "")}
+              onChange={(rating) => usability.patchPostRating(q.id, rating)} />
+          ))}
+        </div>
+        <div className="mt-6 border-t border-ink/20 pt-5">
+          <h3 className="font-display text-2xl text-navy">Optional comments</h3>
+          <p className="mt-1 text-sm text-muted-foreground">Add details if you would like. Please do not include names or sensitive information.</p>
+          <div className="mt-4 space-y-4">
+            <div>
+              <label htmlFor="liked" className="block text-sm font-semibold">What worked well?</label>
+              <textarea id="liked" disabled={!u.consent} value={u.post.liked} maxLength={1500} rows={3}
+                onChange={(e) => usability.patchPost({ liked: e.target.value })}
+                className="mt-1 w-full rounded-md border bg-background p-3 text-sm" />
+            </div>
+            <div>
+              <label htmlFor="confusing" className="block text-sm font-semibold">What would you improve or change?</label>
+              <textarea id="confusing" disabled={!u.consent} value={u.post.confusing} maxLength={1500} rows={3}
+                onChange={(e) => usability.patchPost({ confusing: e.target.value })}
+                className="mt-1 w-full rounded-md border bg-background p-3 text-sm" />
+            </div>
+            <Button onClick={exportSession} disabled={!u.consent} variant="cardinal"><Download aria-hidden /> Export anonymous CSV results</Button>
+            <p className="text-xs text-muted-foreground">Survey ratings and comments save automatically in this browser after consent. Export is manual; nothing is automatically sent to a researcher.</p>
           </div>
-          <div>
-            <label htmlFor="confusing" className="block text-sm font-semibold">What was difficult or confusing?</label>
-            <textarea id="confusing" disabled={!u.consent} value={u.post.confusing} maxLength={1500} rows={3}
-              onChange={(e) => usability.patchPost({ confusing: e.target.value })}
-              className="mt-1 w-full rounded-md border bg-background p-3 text-sm" />
-          </div>
-          <Button onClick={exportSession} disabled={!u.consent} variant="cardinal"><Download aria-hidden /> Export anonymous CSV results</Button>
-          <p className="text-xs text-muted-foreground">Export is manual. No data is automatically sent to a researcher.</p>
         </div>
       </section>
 
