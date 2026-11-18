@@ -361,7 +361,7 @@ function Usability() {
           </div>
           {u.cloudSubmittedAt && (
             <p role="status" className="mt-4 rounded-md border border-navy/25 bg-cream p-4 text-sm font-semibold text-navy">
-              <CheckCircle2 className="mr-2 inline h-5 w-5" aria-hidden /> Your answers have been stored in the private study database. Thank you! The submitted session is now read-only. Reset to start a new participant.
+              <CheckCircle2 className="mr-2 inline h-5 w-5" aria-hidden /> Your answers have been stored in the private study database. Thank you! The submitted session is now read-only. Reset to start a new participant. To request removal of this submission, give the study facilitator your receipt ID: <span className="break-all font-mono">{u.cloudSubmissionId}</span>.
             </p>
           )}
         </div>
