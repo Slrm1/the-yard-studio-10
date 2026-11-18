@@ -34,13 +34,15 @@ export interface UsabilityState {
   version: 1;
   consent: boolean;
   participantCode: string;
+  cloudSubmissionId: string;
+  cloudSubmittedAt: string;
   scenarios: Record<string, ScenarioRecord>;
   missionNotes: Record<string, { ease: Ease; notes: string }>;
   post: { overall: Ease; ratings: Partial<Record<PostQuestionId, Ease>>; liked: string; confusing: string; };
 }
 
 export const emptyUsability = (): UsabilityState => ({
-  version: 1, consent: false, participantCode: "", scenarios: {}, missionNotes: {}, post: { overall: "", ratings: {}, liked: "", confusing: "" },
+  version: 1, consent: false, participantCode: "", cloudSubmissionId: "", cloudSubmittedAt: "", scenarios: {}, missionNotes: {}, post: { overall: "", ratings: {}, liked: "", confusing: "" },
 });
 
 let st: UsabilityState | null = null;
@@ -72,26 +74,38 @@ const rec = (s: UsabilityState, id: string): ScenarioRecord => s.scenarios[id] ?
 
 export const usability = {
   setConsent(v: boolean) { save(v ? { ...load(), consent: true } : emptyUsability()); },
-  setParticipant(code: string) { save({ ...load(), participantCode: code.slice(0, 40) }); },
-  patchScenario(id: string, patch: Partial<ScenarioRecord>) { const s = load(); save({ ...s, scenarios: { ...s.scenarios, [id]: { ...rec(s, id), ...patch } } }); },
+  setParticipant(code: string) { const s = load(); if (!s.consent || s.cloudSubmittedAt) return; save({ ...s, participantCode: code.slice(0, 40) }); },
+  patchScenario(id: string, patch: Partial<ScenarioRecord>) { const s = load(); if (!s.consent || s.cloudSubmittedAt) return; save({ ...s, scenarios: { ...s.scenarios, [id]: { ...rec(s, id), ...patch } } }); },
   /** Only for automatically observable scenarios; never called for self-report ones. */
   markAuto(id: string) {
     const sc = A11Y_SCENARIOS.find((x) => x.id === id);
     if (!sc || sc.verification !== "auto" || typeof window === "undefined") return;
     const s = load();
-    if (!s.consent || rec(s, id).done) return;
+    if (!s.consent || s.cloudSubmittedAt || rec(s, id).done) return;
     save({ ...s, scenarios: { ...s.scenarios, [id]: { ...rec(s, id), done: true } } });
   },
-  patchMission(key: string, patch: Partial<{ ease: Ease; notes: string }>) { const s = load(); const cur = s.missionNotes[key] ?? { ease: "", notes: "" }; save({ ...s, missionNotes: { ...s.missionNotes, [key]: { ...cur, ...patch } } }); },
-  patchPost(patch: Partial<UsabilityState["post"]>) { const s = load(); if (!s.consent) return; save({ ...s, post: { ...s.post, ...patch } }); },
+  patchMission(key: string, patch: Partial<{ ease: Ease; notes: string }>) { const s = load(); if (!s.consent || s.cloudSubmittedAt) return; const cur = s.missionNotes[key] ?? { ease: "", notes: "" }; save({ ...s, missionNotes: { ...s.missionNotes, [key]: { ...cur, ...patch } } }); },
+  patchPost(patch: Partial<UsabilityState["post"]>) { const s = load(); if (!s.consent || s.cloudSubmittedAt) return; save({ ...s, post: { ...s.post, ...patch } }); },
   patchPostRating(id: PostQuestionId, rating: Ease) {
     const s = load();
-    if (!s.consent) return;
+    if (!s.consent || s.cloudSubmittedAt) return;
     if (id === "overall") {
       save({ ...s, post: { ...s.post, overall: rating } });
     } else {
       save({ ...s, post: { ...s.post, ratings: { ...s.post.ratings, [id]: rating } } });
     }
+  },
+  beginCloudSubmission(id: string): string {
+    const s = load();
+    if (!s.consent || s.cloudSubmittedAt) throw new Error("Survey already submitted or consent missing.");
+    const savedId = s.cloudSubmissionId || id;
+    if (!s.cloudSubmissionId) save({ ...s, cloudSubmissionId: savedId });
+    return savedId;
+  },
+  markCloudSubmitted(id: string) {
+    const s = load();
+    if (!s.consent || s.cloudSubmissionId !== id) return;
+    save({ ...s, cloudSubmittedAt: new Date().toISOString() });
   },
   reset() { save(emptyUsability()); },
 };
