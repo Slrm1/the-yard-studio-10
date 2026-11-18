@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { CheckCircle2, Circle, RotateCcw, ArrowRight, Download, ShieldCheck } from "lucide-react";
 import { PageHeader, DemoBadge } from "@/components/brand";
 import { Button } from "@/components/ui/button";
@@ -9,11 +10,12 @@ import {
   type Ease, type Scenario, type PostQuestionId,
 } from "@/lib/usability";
 import { notify } from "@/lib/announce";
+import { submitUsabilityToCloud } from "@/lib/survey-cloud";
 
 export const Route = createFileRoute("/usability")({
   head: () => ({ meta: [
     { title: "Usability Test — The Yard Studio" },
-    { name: "description", content: "Run four functional missions and six optional accessibility scenarios. Testing notes stay in your browser." },
+    { name: "description", content: "Optional anonymous usability survey with local drafts and secure cloud submission." },
   ] }),
   component: Usability,
 });
@@ -96,7 +98,7 @@ function SurveyQuestion({ id, question, number, value, onChange, disabled }: {
   );
 }
 
-function ScenarioCard({ scenario, number, consent }: { scenario: Scenario; number: number; consent: boolean }) {
+function ScenarioCard({ scenario, number, consent, locked }: { scenario: Scenario; number: number; consent: boolean; locked: boolean }) {
   const u = useUsability();
   const item = u.scenarios[scenario.id] ?? { done: false, ease: "" as Ease, notes: "" };
   const auto = scenario.verification === "auto";
@@ -116,7 +118,7 @@ function ScenarioCard({ scenario, number, consent }: { scenario: Scenario; numbe
         <Button asChild size="sm" variant="outline"><Link to={scenario.destination}>Go to task <ArrowRight aria-hidden /></Link></Button>
         {!auto && (
           <label className="inline-flex min-h-11 items-center gap-2 text-sm font-medium">
-            <input type="checkbox" checked={item.done} disabled={!consent}
+            <input type="checkbox" checked={item.done} disabled={!consent || locked}
               onChange={(e) => usability.patchScenario(scenario.id, { done: e.target.checked })}
               className="h-5 w-5 accent-[var(--navy)]" />
             I completed this task
@@ -125,10 +127,10 @@ function ScenarioCard({ scenario, number, consent }: { scenario: Scenario; numbe
       </div>
       {consent && (
         <div className="mt-4 space-y-3 border-t pt-4">
-          <EaseInput id={"ease-" + scenario.id} value={item.ease} onChange={(ease) => usability.patchScenario(scenario.id, { ease })} />
+          <EaseInput id={"ease-" + scenario.id} value={item.ease} onChange={(ease) => usability.patchScenario(scenario.id, { ease })} disabled={locked} />
           <div>
             <label htmlFor={"notes-" + scenario.id} className="block text-xs font-semibold">Problems, confusion or feedback (optional)</label>
-            <textarea id={"notes-" + scenario.id} maxLength={1000} rows={2} value={item.notes}
+            <textarea id={"notes-" + scenario.id} maxLength={1000} rows={2} value={item.notes} disabled={locked}
               onChange={(e) => usability.patchScenario(scenario.id, { notes: e.target.value })}
               className="mt-1 w-full rounded-md border bg-background p-3 text-sm" placeholder="Describe what happened; don't enter names or private details." />
           </div>
@@ -141,6 +143,8 @@ function ScenarioCard({ scenario, number, consent }: { scenario: Scenario; numbe
 function Usability() {
   const { tasks } = useAppState();
   const u = useUsability();
+  const [submitting, setSubmitting] = useState(false);
+  const locked = submitting || Boolean(u.cloudSubmittedAt);
   const completed = MISSIONS.filter((m) => tasks[m.key]).length;
   const accessibilityDone = A11Y_SCENARIOS.filter((s) => u.scenarios[s.id]?.done).length;
   const surveyAnswered = POST_SURVEY_QUESTIONS.filter((q) => q.id === "overall" ? !!u.post.overall : !!u.post.ratings?.[q.id]).length;
@@ -164,9 +168,25 @@ function Usability() {
     }
   };
 
+  const submitToCloud = async () => {
+    if (submitting || !u.consent || u.cloudSubmittedAt) return;
+    setSubmitting(true);
+    try {
+      const id = usability.beginCloudSubmission(crypto.randomUUID());
+      await submitUsabilityToCloud(id, u, MISSIONS.map((m) => ({ key: m.key, done: Boolean(tasks[m.key]) })));
+      usability.markCloudSubmitted(id);
+      notify.success("Survey submitted and stored securely.");
+    } catch (error) {
+      notify.error("Cloud submission failed. Your local answers are still saved; retry when connected.");
+      console.error("Survey submission was not confirmed:", error);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="mx-auto max-w-6xl min-w-0">
-      <PageHeader eyebrow="Experience lab · local demonstration" title="Usability Test"
+      <PageHeader eyebrow="Experience lab · usability study" title="Usability Test"
         actions={<DemoBadge>{completed} of 4 missions · {accessibilityDone} of 6 accessibility tasks</DemoBadge>}>
         Practice core student workflows and gather optional accessibility feedback. Completing a task is not the same as proving it was easy or WCAG compliant.
       </PageHeader>
@@ -177,22 +197,22 @@ function Usability() {
           <li>Ask the participant to think aloud without coaching them toward the answer.</li>
           <li>Have them attempt each mission. Observe independent completion and where help is needed.</li>
           <li>Test accessibility tasks with the appropriate keyboard, browser zoom or assistive technology.</li>
-          <li>Ask about difficulty, record barriers, and download results only with participant agreement.</li>
+          <li>Ask about difficulty, record barriers, and submit or export responses only with participant agreement.</li>
         </ol>
-        <p className="mt-3 text-sm">No background recording, analytics upload, time estimates, or cross-user collaboration occurs. Notes remain in this browser until you export or clear them. Avoid storing identifiable or sensitive information.</p>
+        <p className="mt-3 text-sm">No background recording or tracking analytics is performed. Notes stay on this device as a draft. Selecting Submit survey securely sends ratings, task outcomes, notes and the optional anonymous code to a private study database, with a submission timestamp. Do not enter names or sensitive information.</p>
         <label className="mt-4 flex items-start gap-3 rounded-md border bg-card p-3 text-sm font-medium">
-          <input type="checkbox" className="mt-0.5 h-5 w-5 shrink-0 accent-[var(--navy)]" checked={u.consent}
+          <input type="checkbox" className="mt-0.5 h-5 w-5 shrink-0 accent-[var(--navy)]" checked={u.consent} disabled={locked}
             onChange={(e) => usability.setConsent(e.target.checked)} />
-          The participant agreed to local collection of optional task notes and ratings.
+          The participant agrees to local draft collection and optional cloud submission of survey answers for this usability study.
         </label>
         {u.consent && (
           <div className="mt-4">
             <label htmlFor="participant-code" className="block text-sm font-semibold">Anonymous session code (optional)</label>
-            <input id="participant-code" maxLength={40} value={u.participantCode} onChange={(e) => usability.setParticipant(e.target.value)}
+            <input id="participant-code" maxLength={40} value={u.participantCode} disabled={locked} onChange={(e) => usability.setParticipant(e.target.value)}
               placeholder="Example: Test-01" className="mt-1 min-h-11 w-full max-w-sm rounded-md border bg-card px-3" />
           </div>
         )}
-        {!u.consent && <p className="mt-2 text-xs text-muted-foreground">Task links and original four completion indicators still work. Optional ratings, checkboxes, and export are available after consent.</p>}
+        {!u.consent && <p className="mt-2 text-xs text-muted-foreground">Task links and the four completion indicators still work. Optional answers and submission are available after consent.</p>}
         {usabilityStorageError && <p role="alert" className="mt-3 font-semibold text-cardinal">Browser storage is blocked; notes may be lost on refresh.</p>}
       </section>
 
@@ -228,11 +248,11 @@ function Usability() {
                 </Button>
                 {u.consent && (
                   <div className="mt-4 space-y-3 border-t pt-4">
-                    <EaseInput id={"mission-ease-" + m.key} value={notes.ease}
+                    <EaseInput id={"mission-ease-" + m.key} value={notes.ease} disabled={locked}
                       onChange={(ease) => usability.patchMission(m.key, { ease })} />
                     <div>
                       <label htmlFor={"mission-note-" + m.key} className="block text-xs font-semibold">Observations and barriers (optional)</label>
-                      <textarea id={"mission-note-" + m.key} value={notes.notes} maxLength={1000} rows={2}
+                      <textarea id={"mission-note-" + m.key} value={notes.notes} maxLength={1000} rows={2} disabled={locked}
                         onChange={(e) => usability.patchMission(m.key, { notes: e.target.value })}
                         className="mt-1 w-full rounded-md border bg-background p-3 text-sm"
                         placeholder="Where did the participant need assistance?" />
@@ -255,7 +275,7 @@ function Usability() {
         </div>
         <p className="mb-5 max-w-3xl text-sm">These scenarios test use with speech, low-vision options, keyboard interaction, screen readers, and nonvisual map alternatives. Some actions are tracked automatically; tasks needing external assistive technology require participant self-report.</p>
         <div className="grid gap-4 md:grid-cols-2">
-          {A11Y_SCENARIOS.map((s, i) => <ScenarioCard key={s.id} scenario={s} number={i + 1} consent={u.consent} />)}
+          {A11Y_SCENARIOS.map((s, i) => <ScenarioCard key={s.id} scenario={s} number={i + 1} consent={u.consent} locked={locked} />)}
         </div>
       </section>
 
@@ -293,13 +313,13 @@ function Usability() {
           </div>
           {!u.consent && (
             <p role="status" className="mb-4 rounded-md border border-cardinal/40 bg-card p-3 text-sm font-semibold text-cardinal">
-              To answer, first agree to local feedback collection in the Before testing section above.
+              To answer, agree to voluntary survey collection in the Before testing section above.
             </p>
           )}
           <div className="grid min-w-0 gap-3 sm:gap-4">
             {POST_SURVEY_QUESTIONS.map((q, i) => (
               <SurveyQuestion key={q.id} id={q.id} question={q.text} number={i + 1}
-                disabled={!u.consent}
+                disabled={!u.consent || locked}
                 value={q.id === "overall" ? u.post.overall : (u.post.ratings?.[q.id] ?? "")}
                 onChange={(rating) => usability.patchPostRating(q.id, rating)} />
             ))}
@@ -313,14 +333,14 @@ function Usability() {
           <div className="mt-4 grid gap-4">
             <div>
               <label htmlFor="liked" className="block text-sm font-semibold">What worked especially well?</label>
-              <textarea id="liked" disabled={!u.consent} value={u.post.liked} maxLength={1500} rows={3}
+              <textarea id="liked" disabled={!u.consent || locked} value={u.post.liked} maxLength={1500} rows={3}
                 onChange={(e) => usability.patchPost({ liked: e.target.value })}
                 placeholder="For example, a tool that was easy to find or use…"
                 className="mt-2 w-full rounded-md border bg-background p-3 text-sm disabled:opacity-60" />
             </div>
             <div>
               <label htmlFor="confusing" className="block text-sm font-semibold">What would you improve?</label>
-              <textarea id="confusing" disabled={!u.consent} value={u.post.confusing} maxLength={1500} rows={3}
+              <textarea id="confusing" disabled={!u.consent || locked} value={u.post.confusing} maxLength={1500} rows={3}
                 onChange={(e) => usability.patchPost({ confusing: e.target.value })}
                 placeholder="For example, something unclear, slow, or hard to navigate…"
                 className="mt-2 w-full rounded-md border bg-background p-3 text-sm disabled:opacity-60" />
@@ -328,18 +348,28 @@ function Usability() {
           </div>
           <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t pt-5">
             <p className="max-w-sm text-xs leading-relaxed text-muted-foreground">
-              Answers save in this browser after consent. Export is manual; nothing is sent automatically.
+              Drafts save in this browser. Nothing is sent to the research database until you select Submit survey securely.
             </p>
-            <Button onClick={exportSession} disabled={!u.consent} variant="cardinal">
-              <Download aria-hidden /> Export survey results
-            </Button>
+            <div className="flex flex-wrap items-center gap-3">
+              <Button onClick={exportSession} disabled={!u.consent} variant="outline">
+                <Download aria-hidden /> Export this session CSV
+              </Button>
+              <Button onClick={submitToCloud} disabled={!u.consent || locked} variant="cardinal">
+                <ShieldCheck aria-hidden /> {u.cloudSubmittedAt ? "Submitted" : submitting ? "Submitting..." : "Submit survey securely"}
+              </Button>
+            </div>
           </div>
+          {u.cloudSubmittedAt && (
+            <p role="status" className="mt-4 rounded-md border border-navy/25 bg-cream p-4 text-sm font-semibold text-navy">
+              <CheckCircle2 className="mr-2 inline h-5 w-5" aria-hidden /> Your answers have been stored in the private study database. Thank you! The submitted session is now read-only. Reset to start a new participant. To request removal of this submission, give the study facilitator your receipt ID: <span className="break-all font-mono">{u.cloudSubmissionId}</span>.
+            </p>
+          )}
         </div>
       </section>
 
       <section className="rounded-md border p-5" aria-labelledby="restart">
         <h2 id="restart" className="font-display text-3xl text-navy">Start another test session</h2>
-        <p className="mt-2 text-sm">Clears the four mission checkmarks and all local testing notes. Projects, studio invitations, reviews, and accessibility preferences are preserved. Export results first if you need them.</p>
+        <p className="mt-2 text-sm">Clears the four mission checkmarks and all local testing notes. Projects, studio invitations, reviews, and accessibility preferences are preserved. Export results first if you need them. Previously submitted cloud responses remain stored in the study database.</p>
         <Button className="mt-4" variant="outline" onClick={() => {
           actions.resetTasks();
           usability.reset();

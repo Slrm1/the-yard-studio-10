@@ -109,6 +109,29 @@ describe("Local usability study", () => {
     expect(getUsability().participantCode).toBe("");
     expect(getUsability().scenarios).toEqual({});
   });
+  it("persists a submission identifier across retries and locks submitted answers", () => {
+    usability.setConsent(true);
+    usability.patchPostRating("overall", "4");
+    const id = "18e7f145-0d00-476b-9224-f400e2130cae";
+    expect(usability.beginCloudSubmission(id)).toBe(id);
+    expect(usability.beginCloudSubmission("another-id")).toBe(id);
+    __resetUsabilityCache();
+    expect(getUsability().cloudSubmissionId).toBe(id);
+    usability.markCloudSubmitted(id);
+    expect(getUsability().cloudSubmittedAt).not.toBe("");
+    usability.patchPostRating("overall", "1");
+    usability.patchPost({ liked: "Modified after submission" });
+    expect(getUsability().post.overall).toBe("4");
+    expect(getUsability().post.liked).toBe("");
+    usability.reset();
+    expect(getUsability().cloudSubmissionId).toBe("");
+    expect(getUsability().cloudSubmittedAt).toBe("");
+  });
+
+  it("refuses cloud-submission IDs before participant consent", () => {
+    expect(() => usability.beginCloudSubmission("uuid")).toThrow(/consent/);
+  });
+
   it("saves and exports every five-point post-test survey rating", () => {
     usability.setConsent(true);
     usability.patchPostRating("overall", "5");
