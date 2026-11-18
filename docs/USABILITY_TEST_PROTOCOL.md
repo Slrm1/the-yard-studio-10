@@ -10,11 +10,11 @@ Evaluate whether novice students and participants with different accessibility n
 
 Only run formal sessions after documenting a working build, smoke-test evidence, and a keyboard/screen-reader baseline. Small qualitative rounds of approximately five participants can reveal problems quickly, but do not substitute for including users with distinct accessibility needs. Include low-vision, screen-reader, keyboard-only, motor, and cognitive-access needs as relevant; do not infer disabilities or require disclosure.
 
-Do not collect passwords, university ID, medical details, or private account information. The app records no backend analytics; local notes remain on that browser. Use anonymous codes, not participant names.
+Do not collect passwords, university ID, medical details, or private account information. The app does not record background analytics. Optional survey notes stay on the participant's browser as a draft; only pressing **Submit survey securely** uploads a consented survey to the private database. Use anonymous codes, not participant names.
 
 ## Facilitator introduction
 
-> Thanks for helping us test Yard Studio, a student-made campus design workspace. We are evaluating the website, not you. Some features and emergency/robot experiences are simulated; no real invitations or safety messages are sent. You can stop or skip any task. If you agree, we will note where you find things easy or difficult and optionally save anonymous observations locally. We won't record your screen or voice in the app. May we begin?
+> Thanks for helping us test Yard Studio, a student-made campus design workspace. We are evaluating the website, not you. Some features and emergency/robot experiences are simulated; no real invitations or safety messages are sent. You can stop or skip any task. If you agree, we can save optional survey notes locally, and only when you select Submit survey securely will your ratings, task outcomes, notes, and optional anonymous code be sent to our private study database with a timestamp. We won't record your screen or voice in the app. May we begin?
 
 Obtain explicit agreement before enabling the recording of notes on the Usability Test page. For research involving minors, seek appropriate institutional permission. Do not pressure participation.
 
@@ -51,7 +51,7 @@ At the end of the session, let the participant answer seven short statements wit
 6. I was able to complete the tasks without help.
 7. I would feel confident using Yard Studio on my own.
 
-Questions may be skipped, and a selected rating can be cleared. Two free-text questions are optional: what worked well, and what the participant would improve or change. Consent is required before ratings are stored locally. Answers persist in that browser's test session and are included in the manual CSV export as separate `posttest` rows. The overall question reuses the previous overall rating field to preserve older sessions.
+Questions may be skipped, and a selected rating can be cleared. Two free-text questions are optional: what worked well, and what the participant would improve or change. Consent is required before ratings are saved locally. Answers persist in that browser's test session. The participant can then explicitly submit them to the cloud database or export a local CSV with separate `posttest` rows. The overall question reuses the previous overall rating field to preserve older sessions.
 
 **Do not mix scales during analysis:** each individual mission/scenario asks about *task ease* (1 = Very difficult, 5 = Very easy), while these post-test statements use *agreement* (1 = Strongly disagree, 5 = Strongly agree). Neither kind of self-report is equivalent to an objective completion or accessibility measurement.
 
@@ -72,7 +72,7 @@ Treat both the task-ease ratings and post-test agreement scores as **subjective 
 
 For each participant, capture an anonymous session code; browser/device/assistive technology only if participant chooses to share; task ID; independent outcome; whether help was needed; key errors; accessibility barrier; severity; ease rating; verbatim feedback if consented. Time tasks only if a real timer is used and the participant is informed, never fill invented durations.
 
-Export the local CSV through the Usability Test page after consent. Store externally only under your approved research retention practices. Remove identifiers. Revoke consent by clearing the local session notes.
+After consent, the participant may explicitly click **Submit survey securely**. A success confirmation means the database accepted the submission; otherwise, preserve the local draft and retry. CSV export is optional. Clearing/resetting a local session does **not** delete a cloud-submitted record; participants may ask the researcher to remove a submission using its receipt ID. Researcher should handle deletion via privileged Lovable database access. Agree on retention and deletion practices before recruiting participants.
 
 ## Interpreting and fixing findings
 
